@@ -1,8 +1,8 @@
 {
-  "name": "Schedule: post a recurring Social Poster update by weekday",
+  "name": "Schedule: create a Social Poster draft per weekday, optionally scheduled",
   "nodes": [
     {
-      "id": "41bb358f-cc53-41f8-8ee2-8ee0853530f8",
+      "id": "4404ce6d-c45a-5b51-b3ba-8e3cf535aa8d",
       "name": "Overview",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -11,73 +11,73 @@
         -40
       ],
       "parameters": {
-        "content": "### How it works\nThis workflow helps you schedule a prepared Social Poster post on selected weekdays. Every day at the time you set (timezone Europe/Berlin) the schedule starts. The next step picks today’s caption from the seven fields in “Settings”. If today’s field is empty, the run ends without a post. Otherwise Social Poster creates a draft, schedules it at least five minutes in the future, and confirms it for publishing. There is no immediate publishing. If your team requires approval, the post waits under “Waiting for you”. Note: without further checks, the same caption can be scheduled again on every run of that weekday.\n\n### Setup\nThis template uses the unverified community node `n8n-nodes-social-poster` (tested with version 0.1.1). It runs on self-hosted n8n only, not on n8n Cloud. Install it under Settings → Community Nodes → Install, package name `n8n-nodes-social-poster`. Guide: https://docs.n8n.io/integrations/community-nodes/installation/\nCreate a “Social Poster API” credential (key under the account menu → AI access → API key for n8n, base URL `https://app.social-poster.io`).\nIn “Settings”, enter the account reference (`acc_…`), the lead time in minutes (at least 5), an optional link and image URL, and the caption for Monday through Sunday. Leave a day empty if nothing should go out that day. Set the time in the schedule node (default 09:00). Select the credential on “Schedule the post”, test once, and check the draft in Social Poster before you activate the workflow.\n\n### Customization\nYou can replace the weekday fields with rows in a spreadsheet if you want a longer rotation. Leave “X Content Reviewed” off until a person has checked the exact text for X (Twitter).",
-        "height": 980,
+        "content": "### How it works\nThe schedule runs every day at the set time (Europe/Berlin). “Choose today's caption” takes the caption for today's weekday from the seven fields in “Settings”. If today has no caption, the run ends without a post. Otherwise “Create the draft” saves it as a draft in Social Poster.\n\n### Draft or scheduled\nThe default is `mode` = `draft`: the workflow only creates a draft and schedules or publishes nothing. The link to view it is in the output of “Create the draft” under `draft.app_draft_url`. To schedule posts, set `mode` to `schedule`. “Schedule the draft” then schedules it `minutesFromNow` minutes later (at least 5) and confirms it. If your team requires approval, it waits under “Waiting for you”. There is no immediate publishing.\n\n### Setup\nThis template uses the unverified community node `n8n-nodes-social-poster` (tested with version 0.1.1). It runs on self-hosted n8n only, not on n8n Cloud. Install it under Settings → Community Nodes → Install. Guide: https://docs.n8n.io/integrations/community-nodes/installation/\nCreate “Social Poster API” credentials. You get the key in Social Poster under the account menu → AI access → API key for n8n. The base URL is `https://app.social-poster.io` without `/mcp`.\nIn “Settings”, enter your account reference (`acc_…`), an optional link and image URL, and the captions for Monday to Sunday. Set the time on the schedule node, the default is 9:00. Select the credentials on both Social Poster nodes and run it once by hand.\n\n### Customization\nLeave a day empty if nothing should go out. For a longer rotation, read the captions from a spreadsheet.",
+        "height": 820,
         "width": 660,
         "color": 1
       }
     },
     {
-      "id": "2059f0c1-98f4-45f5-b6be-0c8157c9ae6e",
+      "id": "eb8915da-1ff2-522e-9d0c-af6e82c3c3a0",
       "name": "Schedule",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        460,
+        440,
         80
       ],
       "parameters": {
-        "content": "## Daily at a set time\nThe default is 09:00 in the Europe/Berlin timezone. Change the hour and minute here.",
-        "height": 240,
-        "width": 360,
+        "content": "## Daily at a set time\nThe default is 9:00 in the Europe/Berlin time zone.",
+        "height": 260,
+        "width": 240,
         "color": 7
       }
     },
     {
-      "id": "225394a7-07a7-45e9-95e5-ac47a85bda7a",
+      "id": "2c50ee52-7b2c-5715-9159-0cf15b00a61b",
       "name": "Weekday captions",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        880,
+        720,
         80
       ],
       "parameters": {
-        "content": "## One caption per day\nSet the account, lead time and the seven weekday captions. An empty day is skipped.",
-        "height": 240,
-        "width": 480,
+        "content": "## Captions per day\nAccount reference, `mode` (default `draft`), `minutesFromNow` and the seven daily captions. An empty day is skipped.",
+        "height": 260,
+        "width": 520,
         "color": 7
       }
     },
     {
-      "id": "26f188fe-41ea-44ae-b853-3fd7750c132b",
-      "name": "Schedule the post section",
+      "id": "e4a28ac1-9ddc-5649-8ed9-af5dde62bfc5",
+      "name": "Draft or scheduled",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1520,
+        1280,
         80
       ],
       "parameters": {
-        "content": "## Today’s post\nThe post is scheduled only when today’s caption is filled in. The minimum lead time is 5 minutes.",
-        "height": 240,
-        "width": 420,
+        "content": "## Draft, optionally scheduled\nA draft is created only when today has a caption. With `mode` = `schedule`, “Schedule the draft” schedules it and confirms publishing.",
+        "height": 260,
+        "width": 1100,
         "color": 7
       }
     },
     {
-      "id": "7e84095f-a041-4f5b-bb7a-8306a2c0afdd",
+      "id": "e0b73918-255c-5853-a19e-3400258ad39e",
       "name": "Note about repeats",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1520,
-        700
+        1580,
+        620
       ],
       "parameters": {
-        "content": "This workflow schedules the weekday caption on every run. Change or clear the text if it should not go out again.",
-        "height": 220,
-        "width": 420,
+        "content": "Every run uses the stored caption for that day again. Change or clear it if it should not come back.",
+        "height": 150,
+        "width": 520,
         "color": 3
       }
     },
@@ -120,7 +120,13 @@
               "id": "58573aaa-027b-4583-98c1-e290399d91f0",
               "name": "accountRef",
               "type": "string",
-              "value": "acc_DEINE_KONTO_REFERENZ"
+              "value": "acc_YOUR_ACCOUNT_REF"
+            },
+            {
+              "id": "d2fe7a9d-7bcb-5d65-b4ad-d7166c9127f5",
+              "name": "mode",
+              "type": "string",
+              "value": "draft"
             },
             {
               "id": "f988813f-51be-4dc5-8788-373db1d65950",
@@ -198,7 +204,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1120,
+        1080,
         400
       ],
       "parameters": {
@@ -210,6 +216,12 @@
               "name": "accountRef",
               "type": "string",
               "value": "={{ $json.accountRef }}"
+            },
+            {
+              "id": "a3425dda-d94e-596d-83ab-00c8bb9e3451",
+              "name": "mode",
+              "type": "string",
+              "value": "={{ $json.mode }}"
             },
             {
               "id": "a2f608c6-d720-4c4f-a91f-f3d92b76bd07",
@@ -257,7 +269,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1400,
+        1360,
         400
       ],
       "parameters": {
@@ -286,28 +298,83 @@
       }
     },
     {
-      "id": "fd673db9-e06d-4805-9f53-29a69245e1fb",
-      "name": "Schedule the post",
+      "id": "613d095a-798e-51f9-abe7-4007a038da2f",
+      "name": "Create the draft",
       "type": "n8n-nodes-social-poster.socialPoster",
       "typeVersion": 1,
       "position": [
-        1720,
-        280
+        1640,
+        300
       ],
       "parameters": {
-        "resource": "post",
-        "operation": "createAndSchedule",
+        "resource": "draft",
+        "operation": "create",
         "workspace": "",
         "account": "={{ $json.accountRef }}",
         "caption": "={{ $json.caption }}",
-        "scheduleMode": "minutes",
-        "minutesFromNow": "={{ $json.minutesFromNow }}",
-        "xContentReviewed": false,
         "additionalFields": {
           "link": "={{ $json.link }}",
           "mediaUrls": "={{ $json.mediaUrls }}",
           "title": "={{ $json.title }}"
         }
+      },
+      "credentials": {
+        "socialPosterApi": {
+          "id": "YOUR_SOCIAL_POSTER_CREDENTIAL",
+          "name": "Social Poster API"
+        }
+      }
+    },
+    {
+      "id": "e300ea83-f780-5009-8f8d-76cdf6c5728c",
+      "name": "Should it be scheduled?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        300
+      ],
+      "parameters": {
+        "options": {},
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": false,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "46f5df42-2909-5563-94a5-244f00489309",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ String($(\"Choose today's caption\").item.json.mode || \"\").trim().toLowerCase() }}",
+              "rightValue": "schedule"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "dbc853dd-63d0-5e84-913c-f42f6dfd34cd",
+      "name": "Schedule the draft",
+      "type": "n8n-nodes-social-poster.socialPoster",
+      "typeVersion": 1,
+      "position": [
+        2200,
+        200
+      ],
+      "parameters": {
+        "resource": "post",
+        "operation": "scheduleDraft",
+        "workspace": "",
+        "draftRef": "={{ $('Create the draft').item.json.draft.draft_ref }}",
+        "scheduleMode": "minutes",
+        "minutesFromNow": "={{ $(\"Choose today's caption\").item.json.minutesFromNow }}",
+        "xContentReviewed": false
       },
       "credentials": {
         "socialPosterApi": {
@@ -356,11 +423,34 @@
       "main": [
         [
           {
-            "node": "Schedule the post",
+            "node": "Create the draft",
             "type": "main",
             "index": 0
           }
         ]
+      ]
+    },
+    "Create the draft": {
+      "main": [
+        [
+          {
+            "node": "Should it be scheduled?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should it be scheduled?": {
+      "main": [
+        [
+          {
+            "node": "Schedule the draft",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
       ]
     }
   },

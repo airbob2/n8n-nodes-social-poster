@@ -1,8 +1,8 @@
 {
-  "name": "AI: draft a Social Poster post from a topic for review",
+  "name": "AI: draft a Social Poster post from a topic, optionally scheduled",
   "nodes": [
     {
-      "id": "10f98fa2-7c2e-4211-a23e-bddfd06ccaa0",
+      "id": "8f586f32-cb2a-5f19-8a6e-5b88b21711b0",
       "name": "Overview",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -11,14 +11,14 @@
         -40
       ],
       "parameters": {
-        "content": "### How it works\nThis workflow helps you turn a topic into a finished post text and save it in Social Poster as a draft for review. You enter the topic and optional notes in a form. The workflow then loads your team’s brand and network context from Social Poster and sends both to OpenAI. The model writes only the caption; it does not publish anything. Social Poster creates the draft and then validates it against the rules of the chosen network. You review the draft in Social Poster and schedule or edit it there. This workflow does not publish and does not confirm a schedule.\n\n### Setup\nThis template uses the unverified community node `n8n-nodes-social-poster` (tested with version 0.1.1). It runs on self-hosted n8n only, not on n8n Cloud. Install it under Settings → Community Nodes → Install, package name `n8n-nodes-social-poster`. Guide: https://docs.n8n.io/integrations/community-nodes/installation/\nCreate credentials for “Social Poster API” and OpenAI. You create the Social Poster key under the account menu → AI access → API key for n8n. Base URL: `https://app.social-poster.io`.\nIn “Settings”, enter your account reference (`acc_…`). Select both credentials on the nodes. Open the form with “Test workflow”, submit a topic, and check the new draft in Social Poster. If the text looks empty, inspect the OpenAI node output and adjust the expression on the draft node.\n\n### Customization\nYou can change the model, language or tone in the OpenAI prompt. You can also start from a schedule or a spreadsheet instead of the form. If draft validation fails, the draft still exists in Social Poster; the error explains what the network did not accept.",
-        "height": 980,
+        "content": "### How it works\nYou enter a topic and optional notes in the form. The workflow loads your team’s brand and network context from Social Poster, and OpenAI writes only the caption. “Create the draft” saves it as an AI-generated draft, and “Validate the draft” checks it against the network rules.\n\n### Draft or scheduled\nThe default is `mode` = `draft`: the workflow only creates a draft and schedules or publishes nothing. The link to view it is in the output of “Create the draft” under `draft.app_draft_url`. To schedule posts, set `mode` to `schedule`. “Schedule the draft” then schedules it `minutesFromNow` minutes later (at least 5) and confirms it. If your team requires approval, it waits under “Waiting for you”. There is no immediate publishing. Only a draft that “Validate the draft” reports as valid is scheduled.\n\n### Setup\nThis template uses the unverified community node `n8n-nodes-social-poster` (tested with version 0.1.1). It runs on self-hosted n8n only, not on n8n Cloud. Install it under Settings → Community Nodes → Install. Guide: https://docs.n8n.io/integrations/community-nodes/installation/\nCreate “Social Poster API” credentials. You get the key in Social Poster under the account menu → AI access → API key for n8n. The base URL is `https://app.social-poster.io` without `/mcp`.\nAlso create OpenAI credentials. In “Settings”, enter your account reference (`acc_…`). Open the form with “Test workflow” and submit a topic.\n\n### Customization\nYou can change the model, language or prompt on the OpenAI node, or start from a schedule instead of the form. AI text can contain mistakes: read every draft before you switch to `schedule`.",
+        "height": 820,
         "width": 660,
         "color": 1
       }
     },
     {
-      "id": "5eb0fd3f-b04f-4129-994d-dcc2ab2817cc",
+      "id": "3eee0846-cc58-5524-80eb-bd639d8dd9d9",
       "name": "Collect the topic",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -27,41 +27,41 @@
         80
       ],
       "parameters": {
-        "content": "## Start from the form\nYou enter the topic and optional notes. The account reference is set in “Settings”.",
-        "height": 240,
-        "width": 560,
+        "content": "## Start from the form\nTopic and notes come from the form. “Settings” holds the account reference, `mode` (default `draft`) and `minutesFromNow`.",
+        "height": 260,
+        "width": 520,
         "color": 7
       }
     },
     {
-      "id": "9207c521-fea5-43b6-94ba-c1769a8be9cb",
+      "id": "00d7bffb-7f8a-567e-ac92-4294f10b5f47",
       "name": "Write the text with AI",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1120,
+        1020,
         80
       ],
       "parameters": {
-        "content": "## Context and draft\nFirst the workflow loads brand context from Social Poster, then OpenAI writes the caption.",
-        "height": 240,
-        "width": 560,
+        "content": "## Context and text\nFirst the brand context comes from Social Poster, then OpenAI writes the caption.",
+        "height": 260,
+        "width": 520,
         "color": 7
       }
     },
     {
-      "id": "33460264-37bb-4a6a-ba8f-32d9b8cb37e0",
-      "name": "Save as a draft",
+      "id": "17d78998-bc90-54b8-b951-0e2aac0106f9",
+      "name": "Draft, optionally scheduled",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1760,
+        1620,
         80
       ],
       "parameters": {
-        "content": "## No publishing\nThe workflow only creates and validates a draft. You schedule and approve it in Social Poster.",
-        "height": 240,
-        "width": 560,
+        "content": "## Draft, optionally scheduled\nThe caption is saved as a draft and validated. Only with `mode` = `schedule` and a valid draft does “Schedule the draft” schedule it.",
+        "height": 260,
+        "width": 1100,
         "color": 7
       }
     },
@@ -76,7 +76,7 @@
       ],
       "parameters": {
         "formTitle": "Draft a post from a topic",
-        "formDescription": "Writes a post with AI and saves it in Social Poster as a draft for review. Nothing is published.",
+        "formDescription": "Writes a caption with AI and saves it in Social Poster as a draft.",
         "formFields": {
           "values": [
             {
@@ -94,7 +94,7 @@
         "options": {
           "respondWithOptions": {
             "values": {
-              "formSubmittedText": "Thank you. The draft will be created in Social Poster. Review it there before you schedule it."
+              "formSubmittedText": "Thanks. The draft is being created in Social Poster."
             }
           }
         }
@@ -118,7 +118,19 @@
               "id": "50d9fe37-9689-41c6-9713-34da4dfff09f",
               "name": "accountRef",
               "type": "string",
-              "value": "acc_DEINE_KONTO_REFERENZ"
+              "value": "acc_YOUR_ACCOUNT_REF"
+            },
+            {
+              "id": "3471a7e2-c666-5fe5-8e9f-b03c4ead3788",
+              "name": "mode",
+              "type": "string",
+              "value": "draft"
+            },
+            {
+              "id": "bc22412a-ce12-52d1-8783-661ff107c376",
+              "name": "minutesFromNow",
+              "type": "number",
+              "value": 15
             },
             {
               "id": "6e8e024f-d97e-4425-a8c9-bf92b505fec4",
@@ -163,7 +175,7 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 1.8,
       "position": [
-        1400,
+        1360,
         400
       ],
       "parameters": {
@@ -195,7 +207,7 @@
       "type": "n8n-nodes-social-poster.socialPoster",
       "typeVersion": 1,
       "position": [
-        1720,
+        1680,
         400
       ],
       "parameters": {
@@ -221,14 +233,82 @@
       "type": "n8n-nodes-social-poster.socialPoster",
       "typeVersion": 1,
       "position": [
-        2000,
+        1960,
         400
       ],
       "parameters": {
         "resource": "draft",
         "operation": "validate",
         "workspace": "",
-        "draftRef": "={{ $json.draft.draft_ref }}"
+        "draftRef": "={{ $('Create the draft').item.json.draft.draft_ref }}"
+      },
+      "credentials": {
+        "socialPosterApi": {
+          "id": "YOUR_SOCIAL_POSTER_CREDENTIAL",
+          "name": "Social Poster API"
+        }
+      }
+    },
+    {
+      "id": "2d78303d-07ab-5a89-8d2e-7998129096d8",
+      "name": "Should it be scheduled?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2240,
+        400
+      ],
+      "parameters": {
+        "options": {},
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": false,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "8bd62188-9130-59a8-9bae-27e0b207742b",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ String($('Settings').item.json.mode || \"\").trim().toLowerCase() }}",
+              "rightValue": "schedule"
+            },
+            {
+              "id": "278a6560-1a80-594a-82c5-2ddfec45b957",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.validation && $json.validation.ok === true }}",
+              "rightValue": ""
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "cabb07aa-58e2-50de-9ab3-b34f241cc53b",
+      "name": "Schedule the draft",
+      "type": "n8n-nodes-social-poster.socialPoster",
+      "typeVersion": 1,
+      "position": [
+        2520,
+        300
+      ],
+      "parameters": {
+        "resource": "post",
+        "operation": "scheduleDraft",
+        "workspace": "",
+        "draftRef": "={{ $('Create the draft').item.json.draft.draft_ref }}",
+        "scheduleMode": "minutes",
+        "minutesFromNow": "={{ $('Settings').item.json.minutesFromNow }}",
+        "xContentReviewed": false
       },
       "credentials": {
         "socialPosterApi": {
@@ -293,6 +373,29 @@
             "index": 0
           }
         ]
+      ]
+    },
+    "Validate the draft": {
+      "main": [
+        [
+          {
+            "node": "Should it be scheduled?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should it be scheduled?": {
+      "main": [
+        [
+          {
+            "node": "Schedule the draft",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
       ]
     }
   },

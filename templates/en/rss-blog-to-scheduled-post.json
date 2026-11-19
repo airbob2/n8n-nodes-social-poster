@@ -1,24 +1,24 @@
 {
-  "name": "RSS: schedule a Social Poster post when a new blog article appears",
+  "name": "RSS: turn a new blog article into a Social Poster draft, optionally scheduled",
   "nodes": [
     {
-      "id": "44ed47e2-77cd-4ced-9d7d-6f19f03420d9",
+      "id": "f4e964c3-3d4e-504d-905b-747d7a7f2be5",
       "name": "Overview",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -280,
+        -300,
         -40
       ],
       "parameters": {
-        "content": "### How it works\nThis workflow helps you schedule a Social Poster post when a new article appears in your blog RSS feed. The RSS trigger checks the feed at the interval you set and starts only for a new item. The next step builds the post text from the title and summary, keeps the article link, and adds your Social Poster account reference. Social Poster then creates a draft, schedules it at least five minutes in the future, and confirms it for publishing. The team API key cannot publish immediately. If your team requires approval, the post waits in Social Poster under “Waiting for you” until someone confirms it. The trigger remembers items it has already seen in this n8n instance; after a fresh install, an item may run again.\n\n### Setup\nThis template uses the unverified community node `n8n-nodes-social-poster` (tested with version 0.1.1). It runs on self-hosted n8n only, not on n8n Cloud. Install it under Settings → Community Nodes → Install, package name `n8n-nodes-social-poster`. Guide: https://docs.n8n.io/integrations/community-nodes/installation/\nIn n8n, create a “Social Poster API” credential. Create the key in Social Poster under the account menu → AI access → API key for n8n. Set the base URL to `https://app.social-poster.io` without `/mcp`.\nIn “Set post fields”, enter your account reference (typically `acc_…`) and the minutes until publishing (at least 5). In the RSS trigger, set your feed URL. Select the credential on “Schedule the post”, run one test item, and activate the workflow only when the text looks right.\n\n### Customization\nYou can shorten the text, add hashtags, or put publicly reachable image URLs in Media URLs. To review first, switch the last node to Draft → Create. Leave “X Content Reviewed” off until a person has checked the exact text and media for X (Twitter).",
-        "height": 980,
-        "width": 640,
+        "content": "### How it works\nThe RSS trigger polls your feed and starts only when a new item appears. “Set post fields” builds the caption from the title and summary, strips HTML, cuts it to 2,000 characters and keeps the article link. “Create the draft” saves the post as a draft in Social Poster. n8n remembers items it has seen; after a fresh setup an item can arrive again.\n\n### Draft or scheduled\nThe default is `mode` = `draft`: the workflow only creates a draft and schedules or publishes nothing. The link to view it is in the output of “Create the draft” under `draft.app_draft_url`. To schedule posts, set `mode` to `schedule`. “Schedule the draft” then schedules it `minutesFromNow` minutes later (at least 5) and confirms it. If your team requires approval, it waits under “Waiting for you”. There is no immediate publishing.\n\n### Setup\nThis template uses the unverified community node `n8n-nodes-social-poster` (tested with version 0.1.1). It runs on self-hosted n8n only, not on n8n Cloud. Install it under Settings → Community Nodes → Install. Guide: https://docs.n8n.io/integrations/community-nodes/installation/\nCreate “Social Poster API” credentials. You get the key in Social Poster under the account menu → AI access → API key for n8n. The base URL is `https://app.social-poster.io` without `/mcp`.\nSet your feed URL on the RSS trigger. Enter your account reference (`acc_…`) in “Set post fields”. Select the credentials on “Create the draft” and “Schedule the draft”, then test with one item before you activate the workflow.\n\n### Customization\nYou can shorten the caption, add hashtags or put a public image URL into `mediaUrls`.",
+        "height": 820,
+        "width": 660,
         "color": 1
       }
     },
     {
-      "id": "fe9beeb8-f9a3-40bc-8f08-8fdab5533bdb",
+      "id": "7a9beb58-e32e-53d0-b292-3ed2c5024e04",
       "name": "RSS trigger",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -27,57 +27,57 @@
         80
       ],
       "parameters": {
-        "content": "## Detect a new article\nThe trigger starts only for a new feed item. Set your feed URL and poll interval here.",
+        "content": "## New article\nStarts only for a new feed item. Set the feed URL and the polling interval here.",
         "height": 260,
-        "width": 360,
+        "width": 240,
         "color": 7
       }
     },
     {
-      "id": "8d9d2aa0-e9d0-4448-9f27-3e162ff83bf0",
+      "id": "7ae21cc1-a7ee-58a7-bcc9-625092595118",
       "name": "Prepare the post",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        860,
+        720,
         80
       ],
       "parameters": {
-        "content": "## Build the post\nEnter the account reference and the lead time in minutes. Title, summary and link come from the feed.",
+        "content": "## Build the post\nAccount reference, `mode` (default `draft`) and `minutesFromNow` live here. Title, text and link come from the feed.",
         "height": 260,
-        "width": 400,
+        "width": 520,
         "color": 7
       }
     },
     {
-      "id": "c4656c22-fd5a-4f00-89b3-d7c1eaac30a4",
-      "name": "Schedule in Social Poster",
+      "id": "10c400a8-b4e2-5ad5-a0a1-11c69d6d54ae",
+      "name": "Draft or scheduled",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1340,
+        1280,
         80
       ],
       "parameters": {
-        "content": "## Schedule and confirm\nThe node creates the draft, schedules it and confirms publishing. The minimum lead time is 5 minutes.",
+        "content": "## Draft, optionally scheduled\n“Create the draft” always saves a draft. Only with `mode` = `schedule` does “Schedule the draft” schedule it and confirm publishing.",
         "height": 260,
-        "width": 420,
+        "width": 560,
         "color": 7
       }
     },
     {
-      "id": "1b5ac3fa-3981-4f6a-9f3c-189112d9a651",
+      "id": "65975cad-6dbd-5526-bef2-43fa23cf48a2",
       "name": "Note about X",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1340,
-        680
+        1280,
+        620
       ],
       "parameters": {
-        "content": "Review posts for X (Twitter) in Social Poster yourself. Leave “X Content Reviewed” off until someone has checked the exact text and media.",
-        "height": 200,
-        "width": 420,
+        "content": "Review X (Twitter) posts yourself. Leave “X Content Reviewed” off in “Schedule the draft” until a person has checked the exact text and media.",
+        "height": 150,
+        "width": 560,
         "color": 3
       }
     },
@@ -108,7 +108,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        960,
+        800,
         400
       ],
       "parameters": {
@@ -119,7 +119,13 @@
               "id": "bcdbcfae-c867-4a23-9e4f-6c501142ca56",
               "name": "accountRef",
               "type": "string",
-              "value": "acc_DEINE_KONTO_REFERENZ"
+              "value": "acc_YOUR_ACCOUNT_REF"
+            },
+            {
+              "id": "1f9c99e8-e015-5aa2-a7cd-b6b99b28d399",
+              "name": "mode",
+              "type": "string",
+              "value": "draft"
             },
             {
               "id": "c8684ba6-0d5c-4d80-bc00-74e4ed7f4f8d",
@@ -156,28 +162,83 @@
       }
     },
     {
-      "id": "560b450a-bd22-4754-bd4d-573a2ed9d3b4",
-      "name": "Schedule the post",
+      "id": "8484a914-7954-5b31-8cdb-9e6948c09bf5",
+      "name": "Create the draft",
       "type": "n8n-nodes-social-poster.socialPoster",
       "typeVersion": 1,
       "position": [
-        1460,
+        1080,
         400
       ],
       "parameters": {
-        "resource": "post",
-        "operation": "createAndSchedule",
+        "resource": "draft",
+        "operation": "create",
         "workspace": "",
         "account": "={{ $json.accountRef }}",
         "caption": "={{ $json.caption }}",
-        "scheduleMode": "minutes",
-        "minutesFromNow": "={{ $json.minutesFromNow }}",
-        "xContentReviewed": false,
         "additionalFields": {
           "link": "={{ $json.link }}",
           "mediaUrls": "={{ $json.mediaUrls }}",
           "title": "={{ $json.title }}"
         }
+      },
+      "credentials": {
+        "socialPosterApi": {
+          "id": "YOUR_SOCIAL_POSTER_CREDENTIAL",
+          "name": "Social Poster API"
+        }
+      }
+    },
+    {
+      "id": "9e5bd14d-7d9a-551a-a7d5-fc22973434a4",
+      "name": "Should it be scheduled?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1360,
+        400
+      ],
+      "parameters": {
+        "options": {},
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": false,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "e84af664-1cd9-552e-aebd-436945ab3462",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ String($('Set post fields').item.json.mode || \"\").trim().toLowerCase() }}",
+              "rightValue": "schedule"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "fdf941db-ef48-5851-b9a0-136aee042c35",
+      "name": "Schedule the draft",
+      "type": "n8n-nodes-social-poster.socialPoster",
+      "typeVersion": 1,
+      "position": [
+        1640,
+        300
+      ],
+      "parameters": {
+        "resource": "post",
+        "operation": "scheduleDraft",
+        "workspace": "",
+        "draftRef": "={{ $('Create the draft').item.json.draft.draft_ref }}",
+        "scheduleMode": "minutes",
+        "minutesFromNow": "={{ $('Set post fields').item.json.minutesFromNow }}",
+        "xContentReviewed": false
       },
       "credentials": {
         "socialPosterApi": {
@@ -204,11 +265,34 @@
       "main": [
         [
           {
-            "node": "Schedule the post",
+            "node": "Create the draft",
             "type": "main",
             "index": 0
           }
         ]
+      ]
+    },
+    "Create the draft": {
+      "main": [
+        [
+          {
+            "node": "Should it be scheduled?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should it be scheduled?": {
+      "main": [
+        [
+          {
+            "node": "Schedule the draft",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
       ]
     }
   },

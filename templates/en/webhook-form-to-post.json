@@ -1,8 +1,8 @@
 {
-  "name": "Webhook: create a Social Poster post from a shop or form request",
+  "name": "Webhook: create a Social Poster draft from a shop or form request, optionally scheduled",
   "nodes": [
     {
-      "id": "8c6bda7c-8d64-42ae-8969-8877f47a32c6",
+      "id": "d962dd4e-ace7-5e0a-baaf-c5b0a71f3d25",
       "name": "Overview",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -11,14 +11,14 @@
         -60
       ],
       "parameters": {
-        "content": "### How it works\nThis workflow accepts an HTTP POST from a shop, a form or another app and turns it into a Social Poster post. It first checks that a caption is present in `caption`, `text` or `message`. If the text is missing, it responds with status 400 and creates no post. If the text is present, it maps the link, title and publicly reachable media URLs from the request. “Settings and fields” holds the account reference and lead time. When scheduling is requested (`schedule` true or omitted), Social Poster creates the draft, schedules it at least five minutes in the future, and confirms publishing. If you set `schedule` to false, it only creates a draft for review. The response includes the draft id. Nothing is published immediately.\n\n### Setup\nThis template uses the unverified community node `n8n-nodes-social-poster` (tested with version 0.1.1). It runs on self-hosted n8n only, not on n8n Cloud. Install it under Settings → Community Nodes → Install, package name `n8n-nodes-social-poster`. Guide: https://docs.n8n.io/integrations/community-nodes/installation/\nCreate a “Social Poster API” credential (key under the account menu → AI access → API key for n8n, base URL `https://app.social-poster.io`).\nIn “Settings and fields”, enter the account reference (`acc_…`) and the minutes (at least 5). Select the credential on both Social Poster nodes. Save the workflow, copy the production webhook URL and send JSON such as `{\"caption\":\"Test post\",\"link\":\"https://example.com\",\"schedule\":false}`. Check the draft in Social Poster before you connect a live system. If n8n is reachable from the internet, protect the webhook, for example with header auth. Never send the API key in the webhook request.\n\n### Customization\nYou can rename the payload fields to match your form, or always create drafts only. Leave “X Content Reviewed” off until a person has checked the exact text for X (Twitter).",
-        "height": 1040,
+        "content": "### How it works\nThe workflow accepts an HTTP POST from a shop, form or other app. If there is no text in `caption`, `text` or `message`, it answers with status 400. Otherwise it takes the link, title and public media URLs, saves the post with “Create the draft” and answers with the draft id.\n\n### Draft or scheduled\nThe default is `mode` = `draft`: the workflow only creates a draft and schedules or publishes nothing. The link to view it is in the output of “Create the draft” under `draft.app_draft_url`. To schedule posts, set `mode` to `schedule`. “Schedule the draft” then schedules it `minutesFromNow` minutes later (at least 5) and confirms it. If your team requires approval, it waits under “Waiting for you”. There is no immediate publishing. If the request sends `\"schedule\": false`, it stays a draft even then.\n\n### Setup\nThis template uses the unverified community node `n8n-nodes-social-poster` (tested with version 0.1.1). It runs on self-hosted n8n only, not on n8n Cloud. Install it under Settings → Community Nodes → Install. Guide: https://docs.n8n.io/integrations/community-nodes/installation/\nCreate “Social Poster API” credentials. You get the key in Social Poster under the account menu → AI access → API key for n8n. The base URL is `https://app.social-poster.io` without `/mcp`.\nEnter your account reference (`acc_…`) in “Settings and fields”. Save the workflow, copy the production webhook URL and send `{\"caption\":\"Test post\"}`. If n8n is reachable from the internet, protect the webhook, for example with Header Auth. Never put the API key in the request.\n\n### Customization\nYou can rename the fields to match your form.",
+        "height": 820,
         "width": 680,
         "color": 1
       }
     },
     {
-      "id": "93aec3be-30c8-410d-bfec-d4e61c454629",
+      "id": "69584216-4f27-5d9f-ba94-f9166ee6eda6",
       "name": "Receive the request",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -29,54 +29,54 @@
       "parameters": {
         "content": "## Webhook and checks\nOnly requests with a caption continue. Requests without text receive status 400.",
         "height": 240,
-        "width": 560,
+        "width": 520,
         "color": 7
       }
     },
     {
-      "id": "032c0a12-cb23-4bdc-ac71-32f091691d4b",
+      "id": "2bde1094-aa59-56dd-9ad3-2a300360faac",
       "name": "Map the fields",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1100,
+        1020,
         60
       ],
       "parameters": {
-        "content": "## Account and content\nThe account reference and lead time live here. The caption comes from the request, not from the credentials.",
+        "content": "## Account and content\nAccount reference, `mode` (default `draft`) and `minutesFromNow` live here. The caption comes from the request.",
         "height": 240,
         "width": 480,
         "color": 7
       }
     },
     {
-      "id": "576da42f-e223-41bb-a61b-6d6c5dcc787a",
+      "id": "05b245ce-2093-5951-804f-7d108bbce0d2",
       "name": "Draft or schedule",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1660,
+        1560,
         60
       ],
       "parameters": {
-        "content": "## Two paths\n`schedule` true or omitted schedules the post. `schedule` false creates a draft only. Both paths return the draft id.",
+        "content": "## Draft, optionally scheduled\nEvery request becomes a draft. Only with `mode` = `schedule` and no `schedule` false does “Schedule the draft” schedule it. The answer contains the draft id.",
         "height": 240,
-        "width": 720,
+        "width": 820,
         "color": 7
       }
     },
     {
-      "id": "db62ba94-a747-4cf9-b67f-1d5585d89d5c",
+      "id": "c83dc518-e393-5b26-8c9c-ca63006b67a4",
       "name": "Protect the webhook",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         460,
-        780
+        800
       ],
       "parameters": {
         "content": "If n8n is reachable from the internet, add authentication on the Webhook node. Never send the Social Poster key in the request.",
-        "height": 220,
+        "height": 150,
         "width": 560,
         "color": 3
       }
@@ -158,7 +158,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        1120,
+        1080,
         640
       ],
       "parameters": {
@@ -175,7 +175,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1120,
+        1080,
         320
       ],
       "parameters": {
@@ -186,7 +186,13 @@
               "id": "b03f2215-39ff-42a9-8b22-c6d8e3adffce",
               "name": "accountRef",
               "type": "string",
-              "value": "acc_DEINE_KONTO_REFERENZ"
+              "value": "acc_YOUR_ACCOUNT_REF"
+            },
+            {
+              "id": "ad1e4277-449a-5be6-808a-949d9db52e5e",
+              "name": "mode",
+              "type": "string",
+              "value": "draft"
             },
             {
               "id": "9816534a-13e2-4484-9e9f-e932abd4a41b",
@@ -220,7 +226,7 @@
             },
             {
               "id": "f04b28a6-44aa-4844-b1b9-5ad5b97ec770",
-              "name": "shouldSchedule",
+              "name": "requestAllowsSchedule",
               "type": "boolean",
               "value": "={{ ![\"false\", false, \"0\", 0].includes(($json.body && $json.body.schedule !== undefined) ? $json.body.schedule : ($json.schedule === undefined ? true : $json.schedule)) }}"
             }
@@ -229,78 +235,13 @@
       }
     },
     {
-      "id": "dd27c227-487d-4994-996a-cb8ab35d265f",
-      "name": "Should it be scheduled?",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
+      "id": "316a530b-2b66-5a7f-9bea-6b439258eeeb",
+      "name": "Create the draft",
+      "type": "n8n-nodes-social-poster.socialPoster",
+      "typeVersion": 1,
       "position": [
-        1440,
+        1360,
         320
-      ],
-      "parameters": {
-        "options": {},
-        "conditions": {
-          "options": {
-            "version": 2,
-            "leftValue": "",
-            "caseSensitive": false,
-            "typeValidation": "loose"
-          },
-          "combinator": "and",
-          "conditions": [
-            {
-              "id": "18a5f933-e133-489e-ad31-0f61863d0b19",
-              "operator": {
-                "type": "boolean",
-                "operation": "true",
-                "singleValue": true
-              },
-              "leftValue": "={{ $json.shouldSchedule }}",
-              "rightValue": ""
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "5a759f1b-df45-4205-b3ef-42f7d09a4175",
-      "name": "Schedule the post",
-      "type": "n8n-nodes-social-poster.socialPoster",
-      "typeVersion": 1,
-      "position": [
-        1760,
-        200
-      ],
-      "parameters": {
-        "resource": "post",
-        "operation": "createAndSchedule",
-        "workspace": "",
-        "account": "={{ $json.accountRef }}",
-        "caption": "={{ $json.caption }}",
-        "scheduleMode": "minutes",
-        "minutesFromNow": "={{ $json.minutesFromNow }}",
-        "xContentReviewed": false,
-        "additionalFields": {
-          "link": "={{ $json.link }}",
-          "mediaUrls": "={{ $json.mediaUrls }}",
-          "title": "={{ $json.title }}"
-        }
-      },
-      "credentials": {
-        "socialPosterApi": {
-          "id": "YOUR_SOCIAL_POSTER_CREDENTIAL",
-          "name": "Social Poster API"
-        }
-      }
-    },
-    {
-      "id": "420108f8-b697-4dcd-8c28-206e3c9d40fe",
-      "name": "Create a draft only",
-      "type": "n8n-nodes-social-poster.socialPoster",
-      "typeVersion": 1,
-      "position": [
-        1760,
-        480
       ],
       "parameters": {
         "resource": "draft",
@@ -322,17 +263,85 @@
       }
     },
     {
+      "id": "46f644eb-9c37-5e32-a494-dff2774a72fc",
+      "name": "Should it be scheduled?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1640,
+        320
+      ],
+      "parameters": {
+        "options": {},
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": false,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "7515db33-5b37-5176-8b3b-fd05c669590c",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ String($('Settings and fields').item.json.mode || \"\").trim().toLowerCase() }}",
+              "rightValue": "schedule"
+            },
+            {
+              "id": "e05d7c3d-eb0b-51d5-b26d-5a7859db7484",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "leftValue": "={{ $('Settings and fields').item.json.requestAllowsSchedule }}",
+              "rightValue": ""
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "2e829d30-92f0-5b31-9ece-c49447ac5b30",
+      "name": "Schedule the draft",
+      "type": "n8n-nodes-social-poster.socialPoster",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        200
+      ],
+      "parameters": {
+        "resource": "post",
+        "operation": "scheduleDraft",
+        "workspace": "",
+        "draftRef": "={{ $('Create the draft').item.json.draft.draft_ref }}",
+        "scheduleMode": "minutes",
+        "minutesFromNow": "={{ $('Settings and fields').item.json.minutesFromNow }}",
+        "xContentReviewed": false
+      },
+      "credentials": {
+        "socialPosterApi": {
+          "id": "YOUR_SOCIAL_POSTER_CREDENTIAL",
+          "name": "Social Poster API"
+        }
+      }
+    },
+    {
       "id": "d6fc0c1d-60ae-4eb1-b86e-0d734f7ccb96",
       "name": "Respond with success",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        2080,
+        2200,
         320
       ],
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ { ok: true, draft_ref: $json.draft_ref || ($json.draft && $json.draft.draft_ref), status_class: $json.status_class || \"draft\", scheduled_at_utc: $json.scheduled_at_utc || null, approval_class: $json.approval_class || null } }}",
+        "responseBody": "={{ { ok: true, draft_ref: $('Create the draft').item.json.draft.draft_ref, status_class: $json.status_class || ($json.draft && $json.draft.status_class) || \"draft\", scheduled_at_utc: $json.scheduled_at_utc || null, approval_class: $json.approval_class || null } }}",
         "options": {
           "responseCode": 200
         }
@@ -374,6 +383,17 @@
       "main": [
         [
           {
+            "node": "Create the draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create the draft": {
+      "main": [
+        [
+          {
             "node": "Should it be scheduled?",
             "type": "main",
             "index": 0
@@ -385,22 +405,11 @@
       "main": [
         [
           {
-            "node": "Schedule the post",
+            "node": "Schedule the draft",
             "type": "main",
             "index": 0
           }
         ],
-        [
-          {
-            "node": "Create a draft only",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Schedule the post": {
-      "main": [
         [
           {
             "node": "Respond with success",
@@ -410,7 +419,7 @@
         ]
       ]
     },
-    "Create a draft only": {
+    "Schedule the draft": {
       "main": [
         [
           {
