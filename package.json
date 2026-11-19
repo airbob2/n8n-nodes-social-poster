@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-social-poster",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "n8n community node for Social Poster: list accounts, create drafts and schedule social media posts with a team API key.",
   "license": "MIT",
   "homepage": "https://github.com/airbob2/n8n-nodes-social-poster",
