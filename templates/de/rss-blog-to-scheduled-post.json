@@ -1,0 +1,224 @@
+{
+  "name": "RSS: Neuer Blogartikel als Social-Poster-Beitrag planen",
+  "nodes": [
+    {
+      "id": "44ed47e2-77cd-4ced-9d7d-6f19f03420d9",
+      "name": "Übersicht",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -280,
+        -40
+      ],
+      "parameters": {
+        "content": "### So funktioniert's\nDieser Workflow hilft Dir, neue Blogartikel automatisch als Beitrag in Social Poster zu planen. Der RSS-Trigger prüft Deinen Feed im eingestellten Abstand und startet nur, wenn ein neuer Eintrag erscheint. Der Vorbereitungsschritt baut den Text aus Titel und Kurzbeschreibung, übernimmt den Artikel-Link und ergänzt Deine Konto-Referenz. Social Poster legt dann einen Entwurf an, plant ihn mindestens fünf Minuten in die Zukunft und bestätigt die Veröffentlichung. Mit dem API-Schlüssel gibt es keine Sofort-Veröffentlichung. Wenn Dein Team eine Freigabe verlangt, wartet der Beitrag in Social Poster unter „Wartet auf Dich“, bis jemand ihn bestätigt. Bereits gesehene Einträge merkt sich der Trigger in n8n; nach einem Neuaufsetzen der Instanz kann ein Eintrag erneut ankommen.\n\n### Einrichtung\nInstalliere zuerst den Community-Node `n8n-nodes-social-poster` in Deiner selbst gehosteten n8n-Instanz (nicht in n8n Cloud, der Node ist noch nicht verifiziert): Einstellungen → Community Nodes → Installieren, Paketname `n8n-nodes-social-poster`, getestet mit Version 0.1.1. Anleitung: https://docs.n8n.io/integrations/community-nodes/installation/\nLege in n8n die Anmeldedaten „Social Poster API“ an. Den Schlüssel holst Du in Social Poster unter Konto-Menü → KI-Zugriffe → API-Schlüssel für n8n. Die Basis-URL ist `https://app.social-poster.io` ohne `/mcp`.\nIm Node „Beitrag vorbereiten“ trägst Du die Konto-Referenz ein (in der Kontoliste des Social-Poster-Nodes sichtbar, typisch `acc_…`) und die Minuten bis zur Veröffentlichung (mindestens 5). Im RSS-Trigger setzt Du Deine Feed-URL. Wähle die Anmeldung im Node „Beitrag planen“, teste mit einem Eintrag und aktiviere den Workflow erst, wenn der Text stimmt.\n\n### Anpassen\nDu kannst den Text kürzen, Hashtags ergänzen oder öffentlich erreichbare Bild-URLs in „Media URLs“ eintragen. Für eine Prüfung vor der Planung stellst Du den letzten Node auf Entwurf erstellen. Für X (Twitter) bleibt „X Content Reviewed“ aus; prüfe den Text in Social Poster, bevor Du dort freigibst.",
+        "height": 980,
+        "width": 640,
+        "color": 1
+      }
+    },
+    {
+      "id": "fe9beeb8-f9a3-40bc-8f08-8fdab5533bdb",
+      "name": "RSS-Trigger",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        440,
+        80
+      ],
+      "parameters": {
+        "content": "## Neuen Artikel erkennen\nDer Trigger startet nur bei einem neuen Feed-Eintrag. Setze hier Deine Feed-URL und das Prüfintervall.",
+        "height": 260,
+        "width": 360,
+        "color": 7
+      }
+    },
+    {
+      "id": "8d9d2aa0-e9d0-4448-9f27-3e162ff83bf0",
+      "name": "Text vorbereiten",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        860,
+        80
+      ],
+      "parameters": {
+        "content": "## Beitrag zusammensetzen\nHier trägst Du Konto-Referenz und Vorlauf in Minuten ein. Titel, Kurztext und Link kommen aus dem Feed.",
+        "height": 260,
+        "width": 400,
+        "color": 7
+      }
+    },
+    {
+      "id": "c4656c22-fd5a-4f00-89b3-d7c1eaac30a4",
+      "name": "In Social Poster planen",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        80
+      ],
+      "parameters": {
+        "content": "## Planen und bestätigen\nDer Node erstellt den Entwurf, plant ihn und bestätigt die Veröffentlichung. Es gilt die Mindestwartezeit von 5 Minuten.",
+        "height": 260,
+        "width": 420,
+        "color": 7
+      }
+    },
+    {
+      "id": "1b5ac3fa-3981-4f6a-9f3c-189112d9a651",
+      "name": "Hinweis zu X",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        680
+      ],
+      "parameters": {
+        "content": "Prüfe Beiträge für X (Twitter) in Social Poster selbst. Lass „X Content Reviewed“ aus, solange niemand den genauen Text geprüft hat.",
+        "height": 200,
+        "width": 420,
+        "color": 3
+      }
+    },
+    {
+      "id": "5e30bedd-c28f-4bb7-bf82-fe43526d8730",
+      "name": "Neuer RSS-Eintrag",
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        520,
+        400
+      ],
+      "parameters": {
+        "feedUrl": "https://example.com/feed",
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour",
+              "minute": 5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "78404396-f493-4825-a67e-7babf63e34f2",
+      "name": "Beitrag vorbereiten",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        400
+      ],
+      "parameters": {
+        "options": {},
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bcdbcfae-c867-4a23-9e4f-6c501142ca56",
+              "name": "accountRef",
+              "type": "string",
+              "value": "acc_DEINE_KONTO_REFERENZ"
+            },
+            {
+              "id": "c8684ba6-0d5c-4d80-bc00-74e4ed7f4f8d",
+              "name": "minutesFromNow",
+              "type": "number",
+              "value": 15
+            },
+            {
+              "id": "1a9560c4-2e5c-403d-9fc0-5e7224061348",
+              "name": "title",
+              "type": "string",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "id": "a43d2679-f847-4b81-bd28-d65f9ab1bcf6",
+              "name": "link",
+              "type": "string",
+              "value": "={{ $json.link }}"
+            },
+            {
+              "id": "f28419da-4153-4caf-a85f-199442317307",
+              "name": "mediaUrls",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "f162172c-feb1-4e34-ae9f-b438caefeae9",
+              "name": "caption",
+              "type": "string",
+              "value": "={{ ([$json.title, $json.contentSnippet || $json.content].filter(Boolean).join('\\n\\n')).replace(/<[^>]+>/g, ' ').replace(/\\s+/g, ' ').trim().slice(0, 2000) }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "560b450a-bd22-4754-bd4d-573a2ed9d3b4",
+      "name": "Beitrag planen",
+      "type": "n8n-nodes-social-poster.socialPoster",
+      "typeVersion": 1,
+      "position": [
+        1460,
+        400
+      ],
+      "parameters": {
+        "resource": "post",
+        "operation": "createAndSchedule",
+        "workspace": "",
+        "account": "={{ $json.accountRef }}",
+        "caption": "={{ $json.caption }}",
+        "scheduleMode": "minutes",
+        "minutesFromNow": "={{ $json.minutesFromNow }}",
+        "xContentReviewed": false,
+        "additionalFields": {
+          "link": "={{ $json.link }}",
+          "mediaUrls": "={{ $json.mediaUrls }}",
+          "title": "={{ $json.title }}"
+        }
+      },
+      "credentials": {
+        "socialPosterApi": {
+          "id": "YOUR_SOCIAL_POSTER_CREDENTIAL",
+          "name": "Social Poster API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Neuer RSS-Eintrag": {
+      "main": [
+        [
+          {
+            "node": "Beitrag vorbereiten",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Beitrag vorbereiten": {
+      "main": [
+        [
+          {
+            "node": "Beitrag planen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

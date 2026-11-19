@@ -1,0 +1,308 @@
+{
+  "name": "AI: draft a Social Poster post from a topic for review",
+  "nodes": [
+    {
+      "id": "10f98fa2-7c2e-4211-a23e-bddfd06ccaa0",
+      "name": "Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        -40
+      ],
+      "parameters": {
+        "content": "### How it works\nThis workflow helps you turn a topic into a finished post text and save it in Social Poster as a draft for review. You enter the topic and optional notes in a form. The workflow then loads your team’s brand and network context from Social Poster and sends both to OpenAI. The model writes only the caption; it does not publish anything. Social Poster creates the draft and then validates it against the rules of the chosen network. You review the draft in Social Poster and schedule or edit it there. This workflow does not publish and does not confirm a schedule.\n\n### Setup\nThis template uses the unverified community node `n8n-nodes-social-poster` (tested with version 0.1.1). It runs on self-hosted n8n only, not on n8n Cloud. Install it under Settings → Community Nodes → Install, package name `n8n-nodes-social-poster`. Guide: https://docs.n8n.io/integrations/community-nodes/installation/\nCreate credentials for “Social Poster API” and OpenAI. You create the Social Poster key under the account menu → AI access → API key for n8n. Base URL: `https://app.social-poster.io`.\nIn “Settings”, enter your account reference (`acc_…`). Select both credentials on the nodes. Open the form with “Test workflow”, submit a topic, and check the new draft in Social Poster. If the text looks empty, inspect the OpenAI node output and adjust the expression on the draft node.\n\n### Customization\nYou can change the model, language or tone in the OpenAI prompt. You can also start from a schedule or a spreadsheet instead of the form. If draft validation fails, the draft still exists in Social Poster; the error explains what the network did not accept.",
+        "height": 980,
+        "width": 660,
+        "color": 1
+      }
+    },
+    {
+      "id": "5eb0fd3f-b04f-4129-994d-dcc2ab2817cc",
+      "name": "Collect the topic",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        460,
+        80
+      ],
+      "parameters": {
+        "content": "## Start from the form\nYou enter the topic and optional notes. The account reference is set in “Settings”.",
+        "height": 240,
+        "width": 560,
+        "color": 7
+      }
+    },
+    {
+      "id": "9207c521-fea5-43b6-94ba-c1769a8be9cb",
+      "name": "Write the text with AI",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        80
+      ],
+      "parameters": {
+        "content": "## Context and draft\nFirst the workflow loads brand context from Social Poster, then OpenAI writes the caption.",
+        "height": 240,
+        "width": 560,
+        "color": 7
+      }
+    },
+    {
+      "id": "33460264-37bb-4a6a-ba8f-32d9b8cb37e0",
+      "name": "Save as a draft",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        80
+      ],
+      "parameters": {
+        "content": "## No publishing\nThe workflow only creates and validates a draft. You schedule and approve it in Social Poster.",
+        "height": 240,
+        "width": 560,
+        "color": 7
+      }
+    },
+    {
+      "id": "a9350649-4468-492f-9b7b-a9ae3b3f3113",
+      "name": "Enter a topic",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        520,
+        400
+      ],
+      "parameters": {
+        "formTitle": "Draft a post from a topic",
+        "formDescription": "Writes a post with AI and saves it in Social Poster as a draft for review. Nothing is published.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Topic",
+              "placeholder": "For example: spring offers in the farm shop",
+              "requiredField": true
+            },
+            {
+              "fieldType": "textarea",
+              "fieldLabel": "Notes",
+              "placeholder": "Tone, language, things to include or avoid"
+            }
+          ]
+        },
+        "options": {
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Thank you. The draft will be created in Social Poster. Review it there before you schedule it."
+            }
+          }
+        }
+      },
+      "webhookId": "b3809393-dcd5-464e-afb7-8e76a049ee34"
+    },
+    {
+      "id": "95f58f08-2117-4f8a-9d27-cf1f5982c677",
+      "name": "Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        400
+      ],
+      "parameters": {
+        "options": {},
+        "assignments": {
+          "assignments": [
+            {
+              "id": "50d9fe37-9689-41c6-9713-34da4dfff09f",
+              "name": "accountRef",
+              "type": "string",
+              "value": "acc_DEINE_KONTO_REFERENZ"
+            },
+            {
+              "id": "6e8e024f-d97e-4425-a8c9-bf92b505fec4",
+              "name": "Topic",
+              "type": "string",
+              "value": "={{ $json.Topic }}"
+            },
+            {
+              "id": "f8e4f7de-7fac-42b3-89a7-406a83a41602",
+              "name": "Notes",
+              "type": "string",
+              "value": "={{ $json.Notes }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "94753dfb-af1f-401e-85ec-537d71f01908",
+      "name": "Get brand context",
+      "type": "n8n-nodes-social-poster.socialPoster",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        400
+      ],
+      "parameters": {
+        "resource": "workspace",
+        "operation": "getAiContext",
+        "workspace": ""
+      },
+      "credentials": {
+        "socialPosterApi": {
+          "id": "YOUR_SOCIAL_POSTER_CREDENTIAL",
+          "name": "Social Poster API"
+        }
+      }
+    },
+    {
+      "id": "fc856472-4805-4a3f-9c97-4cfd5a84e889",
+      "name": "Write the post text",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1400,
+        400
+      ],
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You write a social media post for Social Poster. Return only the finished post text, with no quotation marks, no heading such as “Post:”, and no explanation.\n\nUse the following brand and network context from Social Poster where it is available:\n{{ JSON.stringify($json) }}\n\nTopic:\n{{ $('Settings').item.json.Topic }}\n\nAdditional notes from the person using this workflow:\n{{ $('Settings').item.json.Notes || 'No further notes.' }}\n\nRules:\n- Write in the language of the topic, typically German, in a clear, natural “Du” tone if the topic is German.\n- Keep the text short enough for common networks, usually under 1,800 characters.\n- Do not invent facts, offers or numbers that are not in the topic or the notes.\n- Do not add a list of hashtags unless the notes ask for them."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_OPENAI_CREDENTIAL",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "id": "7f766289-33fe-4987-a4ac-350d617f02f6",
+      "name": "Create the draft",
+      "type": "n8n-nodes-social-poster.socialPoster",
+      "typeVersion": 1,
+      "position": [
+        1720,
+        400
+      ],
+      "parameters": {
+        "resource": "draft",
+        "operation": "create",
+        "workspace": "",
+        "account": "={{ $('Settings').item.json.accountRef }}",
+        "caption": "={{ $json.message && $json.message.content ? $json.message.content : ($json.output || $json.text || \"\") }}",
+        "additionalFields": {
+          "aiGenerated": true
+        }
+      },
+      "credentials": {
+        "socialPosterApi": {
+          "id": "YOUR_SOCIAL_POSTER_CREDENTIAL",
+          "name": "Social Poster API"
+        }
+      }
+    },
+    {
+      "id": "625cf45d-0644-4a1a-8c42-c86d2be0f2e5",
+      "name": "Validate the draft",
+      "type": "n8n-nodes-social-poster.socialPoster",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        400
+      ],
+      "parameters": {
+        "resource": "draft",
+        "operation": "validate",
+        "workspace": "",
+        "draftRef": "={{ $json.draft.draft_ref }}"
+      },
+      "credentials": {
+        "socialPosterApi": {
+          "id": "YOUR_SOCIAL_POSTER_CREDENTIAL",
+          "name": "Social Poster API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Enter a topic": {
+      "main": [
+        [
+          {
+            "node": "Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Settings": {
+      "main": [
+        [
+          {
+            "node": "Get brand context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get brand context": {
+      "main": [
+        [
+          {
+            "node": "Write the post text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write the post text": {
+      "main": [
+        [
+          {
+            "node": "Create the draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create the draft": {
+      "main": [
+        [
+          {
+            "node": "Validate the draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

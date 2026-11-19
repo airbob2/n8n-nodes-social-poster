@@ -1,0 +1,224 @@
+{
+  "name": "RSS: schedule a Social Poster post when a new blog article appears",
+  "nodes": [
+    {
+      "id": "44ed47e2-77cd-4ced-9d7d-6f19f03420d9",
+      "name": "Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -280,
+        -40
+      ],
+      "parameters": {
+        "content": "### How it works\nThis workflow helps you schedule a Social Poster post when a new article appears in your blog RSS feed. The RSS trigger checks the feed at the interval you set and starts only for a new item. The next step builds the post text from the title and summary, keeps the article link, and adds your Social Poster account reference. Social Poster then creates a draft, schedules it at least five minutes in the future, and confirms it for publishing. The team API key cannot publish immediately. If your team requires approval, the post waits in Social Poster under “Waiting for you” until someone confirms it. The trigger remembers items it has already seen in this n8n instance; after a fresh install, an item may run again.\n\n### Setup\nThis template uses the unverified community node `n8n-nodes-social-poster` (tested with version 0.1.1). It runs on self-hosted n8n only, not on n8n Cloud. Install it under Settings → Community Nodes → Install, package name `n8n-nodes-social-poster`. Guide: https://docs.n8n.io/integrations/community-nodes/installation/\nIn n8n, create a “Social Poster API” credential. Create the key in Social Poster under the account menu → AI access → API key for n8n. Set the base URL to `https://app.social-poster.io` without `/mcp`.\nIn “Set post fields”, enter your account reference (typically `acc_…`) and the minutes until publishing (at least 5). In the RSS trigger, set your feed URL. Select the credential on “Schedule the post”, run one test item, and activate the workflow only when the text looks right.\n\n### Customization\nYou can shorten the text, add hashtags, or put publicly reachable image URLs in Media URLs. To review first, switch the last node to Draft → Create. Leave “X Content Reviewed” off until a person has checked the exact text and media for X (Twitter).",
+        "height": 980,
+        "width": 640,
+        "color": 1
+      }
+    },
+    {
+      "id": "fe9beeb8-f9a3-40bc-8f08-8fdab5533bdb",
+      "name": "RSS trigger",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        440,
+        80
+      ],
+      "parameters": {
+        "content": "## Detect a new article\nThe trigger starts only for a new feed item. Set your feed URL and poll interval here.",
+        "height": 260,
+        "width": 360,
+        "color": 7
+      }
+    },
+    {
+      "id": "8d9d2aa0-e9d0-4448-9f27-3e162ff83bf0",
+      "name": "Prepare the post",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        860,
+        80
+      ],
+      "parameters": {
+        "content": "## Build the post\nEnter the account reference and the lead time in minutes. Title, summary and link come from the feed.",
+        "height": 260,
+        "width": 400,
+        "color": 7
+      }
+    },
+    {
+      "id": "c4656c22-fd5a-4f00-89b3-d7c1eaac30a4",
+      "name": "Schedule in Social Poster",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        80
+      ],
+      "parameters": {
+        "content": "## Schedule and confirm\nThe node creates the draft, schedules it and confirms publishing. The minimum lead time is 5 minutes.",
+        "height": 260,
+        "width": 420,
+        "color": 7
+      }
+    },
+    {
+      "id": "1b5ac3fa-3981-4f6a-9f3c-189112d9a651",
+      "name": "Note about X",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        680
+      ],
+      "parameters": {
+        "content": "Review posts for X (Twitter) in Social Poster yourself. Leave “X Content Reviewed” off until someone has checked the exact text and media.",
+        "height": 200,
+        "width": 420,
+        "color": 3
+      }
+    },
+    {
+      "id": "5e30bedd-c28f-4bb7-bf82-fe43526d8730",
+      "name": "New RSS item",
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        520,
+        400
+      ],
+      "parameters": {
+        "feedUrl": "https://example.com/feed",
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour",
+              "minute": 5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "78404396-f493-4825-a67e-7babf63e34f2",
+      "name": "Set post fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        400
+      ],
+      "parameters": {
+        "options": {},
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bcdbcfae-c867-4a23-9e4f-6c501142ca56",
+              "name": "accountRef",
+              "type": "string",
+              "value": "acc_DEINE_KONTO_REFERENZ"
+            },
+            {
+              "id": "c8684ba6-0d5c-4d80-bc00-74e4ed7f4f8d",
+              "name": "minutesFromNow",
+              "type": "number",
+              "value": 15
+            },
+            {
+              "id": "1a9560c4-2e5c-403d-9fc0-5e7224061348",
+              "name": "title",
+              "type": "string",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "id": "a43d2679-f847-4b81-bd28-d65f9ab1bcf6",
+              "name": "link",
+              "type": "string",
+              "value": "={{ $json.link }}"
+            },
+            {
+              "id": "f28419da-4153-4caf-a85f-199442317307",
+              "name": "mediaUrls",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "f162172c-feb1-4e34-ae9f-b438caefeae9",
+              "name": "caption",
+              "type": "string",
+              "value": "={{ ([$json.title, $json.contentSnippet || $json.content].filter(Boolean).join('\\n\\n')).replace(/<[^>]+>/g, ' ').replace(/\\s+/g, ' ').trim().slice(0, 2000) }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "560b450a-bd22-4754-bd4d-573a2ed9d3b4",
+      "name": "Schedule the post",
+      "type": "n8n-nodes-social-poster.socialPoster",
+      "typeVersion": 1,
+      "position": [
+        1460,
+        400
+      ],
+      "parameters": {
+        "resource": "post",
+        "operation": "createAndSchedule",
+        "workspace": "",
+        "account": "={{ $json.accountRef }}",
+        "caption": "={{ $json.caption }}",
+        "scheduleMode": "minutes",
+        "minutesFromNow": "={{ $json.minutesFromNow }}",
+        "xContentReviewed": false,
+        "additionalFields": {
+          "link": "={{ $json.link }}",
+          "mediaUrls": "={{ $json.mediaUrls }}",
+          "title": "={{ $json.title }}"
+        }
+      },
+      "credentials": {
+        "socialPosterApi": {
+          "id": "YOUR_SOCIAL_POSTER_CREDENTIAL",
+          "name": "Social Poster API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "New RSS item": {
+      "main": [
+        [
+          {
+            "node": "Set post fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set post fields": {
+      "main": [
+        [
+          {
+            "node": "Schedule the post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

@@ -1,0 +1,377 @@
+{
+  "name": "Schedule: post a recurring Social Poster update by weekday",
+  "nodes": [
+    {
+      "id": "41bb358f-cc53-41f8-8ee2-8ee0853530f8",
+      "name": "Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        -40
+      ],
+      "parameters": {
+        "content": "### How it works\nThis workflow helps you schedule a prepared Social Poster post on selected weekdays. Every day at the time you set (timezone Europe/Berlin) the schedule starts. The next step picks today’s caption from the seven fields in “Settings”. If today’s field is empty, the run ends without a post. Otherwise Social Poster creates a draft, schedules it at least five minutes in the future, and confirms it for publishing. There is no immediate publishing. If your team requires approval, the post waits under “Waiting for you”. Note: without further checks, the same caption can be scheduled again on every run of that weekday.\n\n### Setup\nThis template uses the unverified community node `n8n-nodes-social-poster` (tested with version 0.1.1). It runs on self-hosted n8n only, not on n8n Cloud. Install it under Settings → Community Nodes → Install, package name `n8n-nodes-social-poster`. Guide: https://docs.n8n.io/integrations/community-nodes/installation/\nCreate a “Social Poster API” credential (key under the account menu → AI access → API key for n8n, base URL `https://app.social-poster.io`).\nIn “Settings”, enter the account reference (`acc_…`), the lead time in minutes (at least 5), an optional link and image URL, and the caption for Monday through Sunday. Leave a day empty if nothing should go out that day. Set the time in the schedule node (default 09:00). Select the credential on “Schedule the post”, test once, and check the draft in Social Poster before you activate the workflow.\n\n### Customization\nYou can replace the weekday fields with rows in a spreadsheet if you want a longer rotation. Leave “X Content Reviewed” off until a person has checked the exact text for X (Twitter).",
+        "height": 980,
+        "width": 660,
+        "color": 1
+      }
+    },
+    {
+      "id": "2059f0c1-98f4-45f5-b6be-0c8157c9ae6e",
+      "name": "Schedule",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        460,
+        80
+      ],
+      "parameters": {
+        "content": "## Daily at a set time\nThe default is 09:00 in the Europe/Berlin timezone. Change the hour and minute here.",
+        "height": 240,
+        "width": 360,
+        "color": 7
+      }
+    },
+    {
+      "id": "225394a7-07a7-45e9-95e5-ac47a85bda7a",
+      "name": "Weekday captions",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        880,
+        80
+      ],
+      "parameters": {
+        "content": "## One caption per day\nSet the account, lead time and the seven weekday captions. An empty day is skipped.",
+        "height": 240,
+        "width": 480,
+        "color": 7
+      }
+    },
+    {
+      "id": "26f188fe-41ea-44ae-b853-3fd7750c132b",
+      "name": "Schedule the post section",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        80
+      ],
+      "parameters": {
+        "content": "## Today’s post\nThe post is scheduled only when today’s caption is filled in. The minimum lead time is 5 minutes.",
+        "height": 240,
+        "width": 420,
+        "color": 7
+      }
+    },
+    {
+      "id": "7e84095f-a041-4f5b-bb7a-8306a2c0afdd",
+      "name": "Note about repeats",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        700
+      ],
+      "parameters": {
+        "content": "This workflow schedules the weekday caption on every run. Change or clear the text if it should not go out again.",
+        "height": 220,
+        "width": 420,
+        "color": 3
+      }
+    },
+    {
+      "id": "f79a14b9-4447-417a-ad93-b15a23afaa58",
+      "name": "Daily at 9:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        400
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "daysInterval": 1,
+              "triggerAtHour": 9,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "fca02958-5402-4ac0-b3a9-b822fd16d1f2",
+      "name": "Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        400
+      ],
+      "parameters": {
+        "options": {},
+        "assignments": {
+          "assignments": [
+            {
+              "id": "58573aaa-027b-4583-98c1-e290399d91f0",
+              "name": "accountRef",
+              "type": "string",
+              "value": "acc_DEINE_KONTO_REFERENZ"
+            },
+            {
+              "id": "f988813f-51be-4dc5-8788-373db1d65950",
+              "name": "minutesFromNow",
+              "type": "number",
+              "value": 15
+            },
+            {
+              "id": "c834300c-add0-439e-82cb-8999a4ae0ef3",
+              "name": "link",
+              "type": "string",
+              "value": "https://example.com"
+            },
+            {
+              "id": "2aa66c46-9bb6-44a4-864f-94c0e984aa50",
+              "name": "mediaUrls",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "12ae7423-683c-41e0-8c57-199310a3fe06",
+              "name": "title",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "18db4ab2-debb-41e5-9f0a-3c457d1e27d6",
+              "name": "captionMonday",
+              "type": "string",
+              "value": "A good start to the week. Take a look at our current offers today."
+            },
+            {
+              "id": "273b3b25-31f2-4ed0-bea7-0e64a5194810",
+              "name": "captionTuesday",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "e037e978-06a3-4917-b9db-e43c7741bc9f",
+              "name": "captionWednesday",
+              "type": "string",
+              "value": "Midweek reminder: visit us or order online."
+            },
+            {
+              "id": "05b23752-0afa-4df3-a2dd-dc22b60be2ac",
+              "name": "captionThursday",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "95312c61-b78b-49db-8010-a1f65204e4e3",
+              "name": "captionFriday",
+              "type": "string",
+              "value": "For the weekend we have put together some fresh ideas for you."
+            },
+            {
+              "id": "4d8b7d52-fc38-451e-a2c3-5f02d8433bed",
+              "name": "captionSaturday",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "809e2ecf-72bd-43f8-9a5b-00cef8561381",
+              "name": "captionSunday",
+              "type": "string",
+              "value": ""
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "f77d4985-f6ff-4521-9f79-6b48ac34bfa1",
+      "name": "Choose today's caption",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        400
+      ],
+      "parameters": {
+        "options": {},
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b799dba3-992f-47c5-82ec-c59e82515af4",
+              "name": "accountRef",
+              "type": "string",
+              "value": "={{ $json.accountRef }}"
+            },
+            {
+              "id": "a2f608c6-d720-4c4f-a91f-f3d92b76bd07",
+              "name": "minutesFromNow",
+              "type": "number",
+              "value": "={{ $json.minutesFromNow }}"
+            },
+            {
+              "id": "10720c1e-253f-4b18-aa88-37eea0e400dd",
+              "name": "link",
+              "type": "string",
+              "value": "={{ $json.link }}"
+            },
+            {
+              "id": "45993f6f-1220-414a-88ff-042f3b31fdfd",
+              "name": "mediaUrls",
+              "type": "string",
+              "value": "={{ $json.mediaUrls }}"
+            },
+            {
+              "id": "249cc03f-932e-47fa-bd41-712d3744423e",
+              "name": "title",
+              "type": "string",
+              "value": "={{ $json.title }}"
+            },
+            {
+              "id": "b8f03b7e-a0bf-4ae6-83f2-1e14ad878a2a",
+              "name": "weekday",
+              "type": "number",
+              "value": "={{ $now.setZone('Europe/Berlin').weekday }}"
+            },
+            {
+              "id": "d4c425fb-90d0-4178-a316-745752c16db3",
+              "name": "caption",
+              "type": "string",
+              "value": "={{ ({1:$json.captionMonday,2:$json.captionTuesday,3:$json.captionWednesday,4:$json.captionThursday,5:$json.captionFriday,6:$json.captionSaturday,7:$json.captionSunday})[$now.setZone('Europe/Berlin').weekday] || '' }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "694108bf-1685-42c2-8329-75304e1ae38a",
+      "name": "Caption present?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1400,
+        400
+      ],
+      "parameters": {
+        "options": {},
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": false,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "88fe3525-e8a3-441c-bc6f-1f7003ce8edb",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.caption }}",
+              "rightValue": ""
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "fd673db9-e06d-4805-9f53-29a69245e1fb",
+      "name": "Schedule the post",
+      "type": "n8n-nodes-social-poster.socialPoster",
+      "typeVersion": 1,
+      "position": [
+        1720,
+        280
+      ],
+      "parameters": {
+        "resource": "post",
+        "operation": "createAndSchedule",
+        "workspace": "",
+        "account": "={{ $json.accountRef }}",
+        "caption": "={{ $json.caption }}",
+        "scheduleMode": "minutes",
+        "minutesFromNow": "={{ $json.minutesFromNow }}",
+        "xContentReviewed": false,
+        "additionalFields": {
+          "link": "={{ $json.link }}",
+          "mediaUrls": "={{ $json.mediaUrls }}",
+          "title": "={{ $json.title }}"
+        }
+      },
+      "credentials": {
+        "socialPosterApi": {
+          "id": "YOUR_SOCIAL_POSTER_CREDENTIAL",
+          "name": "Social Poster API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Daily at 9:00": {
+      "main": [
+        [
+          {
+            "node": "Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Settings": {
+      "main": [
+        [
+          {
+            "node": "Choose today's caption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Choose today's caption": {
+      "main": [
+        [
+          {
+            "node": "Caption present?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Caption present?": {
+      "main": [
+        [
+          {
+            "node": "Schedule the post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timezone": "Europe/Berlin"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

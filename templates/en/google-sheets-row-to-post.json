@@ -1,0 +1,584 @@
+{
+  "name": "Google Sheets: schedule Social Poster posts from ready rows",
+  "nodes": [
+    {
+      "id": "ed5b6a04-b0e5-4213-a778-cfb067ae361c",
+      "name": "Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        -60
+      ],
+      "parameters": {
+        "content": "### How it works\nThis workflow helps you process planned social posts from a Google Sheet. A schedule reads the sheet on a regular interval and keeps only rows with status `ready` and a filled-in caption. For each of those rows, Social Poster creates a draft, schedules it at least five minutes in the future, and confirms it for publishing. The workflow then writes the draft reference and status `scheduled` back to the sheet. If scheduling fails, it writes status `error` so you can check the row and set it to `ready` again. There is no immediate publishing. If your team requires approval, the post waits in Social Poster under “Waiting for you”.\n\n### Setup\nThis template uses the unverified community node `n8n-nodes-social-poster` (tested with version 0.1.1). It runs on self-hosted n8n only, not on n8n Cloud. Install it under Settings → Community Nodes → Install, package name `n8n-nodes-social-poster`. Guide: https://docs.n8n.io/integrations/community-nodes/installation/\nCreate credentials for “Social Poster API” and Google Sheets (OAuth2). Create the Social Poster key under the account menu → AI access → API key for n8n. Base URL: `https://app.social-poster.io`.\nCreate a sheet with these headers in row 1: `Caption`, `Link`, `MediaURLs`, `Title`, `Status`, `DraftRef`, `ScheduledAt`. In “Settings”, enter the spreadsheet ID, sheet name, account reference (`acc_…`) and minutes until publishing (at least 5). Select both credentials, put a test row on status `ready`, run once, and check Social Poster before you activate the schedule.\n\n### Customization\nYou can change the interval or create a draft only instead of scheduling. Do not set too many rows to `ready` at once; the API key limits publishing steps (3 per minute). Leave “X Content Reviewed” off until a person has checked the exact text and media for X (Twitter).",
+        "height": 1040,
+        "width": 680,
+        "color": 1
+      }
+    },
+    {
+      "id": "dcda949e-ff7a-4704-bb7b-cf4b82e07db7",
+      "name": "Schedule and settings",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        460,
+        60
+      ],
+      "parameters": {
+        "content": "## Values you must set\nSet the interval, spreadsheet ID, sheet name, account reference and lead time in minutes here.",
+        "height": 240,
+        "width": 520,
+        "color": 7
+      }
+    },
+    {
+      "id": "28e236b3-a04f-457a-a0e0-41b15f35acec",
+      "name": "Find ready rows",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1060,
+        60
+      ],
+      "parameters": {
+        "content": "## Only status ready\nOnly rows with status `ready` and a filled-in caption are processed.",
+        "height": 240,
+        "width": 400,
+        "color": 7
+      }
+    },
+    {
+      "id": "9f030807-9d8d-41ad-8698-91b348e5bd16",
+      "name": "Schedule and write back",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        60
+      ],
+      "parameters": {
+        "content": "## Result in the sheet\nOn success the workflow writes status `scheduled` and the draft id. On failure it writes `error`.",
+        "height": 240,
+        "width": 720,
+        "color": 7
+      }
+    },
+    {
+      "id": "3feb2695-8eb7-4657-b24d-b53857a2f63c",
+      "name": "Note about X",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        760
+      ],
+      "parameters": {
+        "content": "Leave “X Content Reviewed” off until someone has checked the exact text and media. This is required for X.",
+        "height": 200,
+        "width": 400,
+        "color": 3
+      }
+    },
+    {
+      "id": "4970ca50-4dcf-486a-943c-d2a2dc330254",
+      "name": "Every 15 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        400
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "45cf6481-6d6b-4e21-8bc7-5d1101b4c3ed",
+      "name": "Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        400
+      ],
+      "parameters": {
+        "options": {},
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35eb24ee-3945-45ee-a220-f4181cd9973c",
+              "name": "sheetId",
+              "type": "string",
+              "value": "YOUR_GOOGLE_SHEET_ID"
+            },
+            {
+              "id": "d97dab2b-8b3c-4ec2-a987-47928dd5a633",
+              "name": "sheetName",
+              "type": "string",
+              "value": "Beiträge"
+            },
+            {
+              "id": "caa1246b-33bb-47a1-b2af-0b10d45a9800",
+              "name": "accountRef",
+              "type": "string",
+              "value": "acc_DEINE_KONTO_REFERENZ"
+            },
+            {
+              "id": "f245d5d3-e407-4ded-97c6-73d6c51b38a4",
+              "name": "minutesFromNow",
+              "type": "number",
+              "value": 15
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "168b1567-7637-4f4b-abe3-c4525c836241",
+      "name": "Read ready rows",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1080,
+        400
+      ],
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Settings').item.json.sheetId }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('Settings').item.json.sheetName }}"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "id": "db4b6a91-257a-442d-82df-93eb968c5377",
+      "name": "Only status ready",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1360,
+        400
+      ],
+      "parameters": {
+        "options": {},
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": false,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "f352bf1d-6062-4bd6-b9d3-b150550e2fed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "ready"
+            },
+            {
+              "id": "802cccb0-0001-433a-a34a-8908952bcff9",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.Caption }}",
+              "rightValue": ""
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "20e0d397-525b-4e6d-8e81-e49b8e60d983",
+      "name": "Schedule the post",
+      "type": "n8n-nodes-social-poster.socialPoster",
+      "typeVersion": 1,
+      "position": [
+        1640,
+        400
+      ],
+      "parameters": {
+        "resource": "post",
+        "operation": "createAndSchedule",
+        "workspace": "",
+        "account": "={{ $('Settings').item.json.accountRef }}",
+        "caption": "={{ $json.Caption }}",
+        "scheduleMode": "minutes",
+        "minutesFromNow": "={{ $('Settings').item.json.minutesFromNow }}",
+        "xContentReviewed": false,
+        "additionalFields": {
+          "link": "={{ $json.Link }}",
+          "mediaUrls": "={{ $json.MediaURLs }}",
+          "title": "={{ $json.Title }}"
+        }
+      },
+      "credentials": {
+        "socialPosterApi": {
+          "id": "YOUR_SOCIAL_POSTER_CREDENTIAL",
+          "name": "Social Poster API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "6160eb1f-2dc7-4ffa-ac00-32f0aa222833",
+      "name": "Scheduling succeeded?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        400
+      ],
+      "parameters": {
+        "options": {},
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": false,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "2b0cab66-a079-49cc-a06e-521d8cff3313",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.error }}",
+              "rightValue": ""
+            },
+            {
+              "id": "12d6a37e-4aeb-4b0a-8c60-d491d4cd6acd",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.draft_ref || ($json.draft && $json.draft.draft_ref) }}",
+              "rightValue": ""
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "e75f3621-c563-4595-ba84-2ac4edacf627",
+      "name": "Write status scheduled",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2240,
+        280
+      ],
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Settings').item.json.sheetId }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('Settings').item.json.sheetName }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "row_number"
+          ],
+          "value": {
+            "row_number": "={{ $('Only status ready').item.json.row_number }}",
+            "Status": "scheduled",
+            "DraftRef": "={{ $json.draft_ref || $json.draft.draft_ref }}",
+            "ScheduledAt": "={{ $json.scheduled_at_utc }}"
+          },
+          "schema": [
+            {
+              "id": "Caption",
+              "displayName": "Caption",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "MediaURLs",
+              "displayName": "MediaURLs",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "DraftRef",
+              "displayName": "DraftRef",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ScheduledAt",
+              "displayName": "ScheduledAt",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "readOnly": true,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "id": "4164bcb2-2456-4eeb-b0d2-dc122650a422",
+      "name": "Write status error",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2240,
+        560
+      ],
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Settings').item.json.sheetId }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('Settings').item.json.sheetName }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "row_number"
+          ],
+          "value": {
+            "row_number": "={{ $('Only status ready').item.json.row_number }}",
+            "Status": "error",
+            "DraftRef": "={{ $json.error || \"scheduling_failed\" }}"
+          },
+          "schema": [
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "DraftRef",
+              "displayName": "DraftRef",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "readOnly": true,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Every 15 minutes": {
+      "main": [
+        [
+          {
+            "node": "Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Settings": {
+      "main": [
+        [
+          {
+            "node": "Read ready rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read ready rows": {
+      "main": [
+        [
+          {
+            "node": "Only status ready",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only status ready": {
+      "main": [
+        [
+          {
+            "node": "Schedule the post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule the post": {
+      "main": [
+        [
+          {
+            "node": "Scheduling succeeded?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scheduling succeeded?": {
+      "main": [
+        [
+          {
+            "node": "Write status scheduled",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Write status error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timezone": "Europe/Berlin"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

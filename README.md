@@ -10,6 +10,7 @@ You need a Social Poster account. Register at [https://app.social-poster.io](htt
 - [Credentials](#credentials)
 - [Operations](#operations)
 - [Rules and limits](#rules-and-limits)
+- [Templates](#templates)
 - [Compatibility](#compatibility)
 - [Resources](#resources)
 
@@ -58,6 +59,24 @@ Media are passed as public http(s) URLs (up to 20 per post). Uploading files is 
 - Errors from Social Poster come with a short English explanation and the original code.
 
 The node can be attached to the n8n AI Agent as a tool. The rules above apply in the same way.
+
+
+## Templates
+
+Ready-to-import workflows live in this repository (not in the npm package):
+
+- German (node names and notes in German): [`templates/de`](templates/de)
+- English (for the n8n template gallery): [`templates/en`](templates/en)
+
+Import in self-hosted n8n: download a JSON file, then use **Workflow → Import from File**, or copy the JSON and paste it onto the canvas (`Ctrl+V` / `Cmd+V`). Install `n8n-nodes-social-poster` first, add a **Social Poster API** credential, fill in the placeholders (especially the account reference), and test before you activate the workflow. Details: [`templates/README.md`](templates/README.md).
+
+| Template | Raw (DE) | Raw (EN) |
+| --- | --- | --- |
+| RSS: schedule a post when a new blog article appears | [de](https://raw.githubusercontent.com/airbob2/n8n-nodes-social-poster/main/templates/de/rss-blog-to-scheduled-post.json) | [en](https://raw.githubusercontent.com/airbob2/n8n-nodes-social-poster/main/templates/en/rss-blog-to-scheduled-post.json) |
+| Google Sheets: schedule posts from ready rows | [de](https://raw.githubusercontent.com/airbob2/n8n-nodes-social-poster/main/templates/de/google-sheets-row-to-post.json) | [en](https://raw.githubusercontent.com/airbob2/n8n-nodes-social-poster/main/templates/en/google-sheets-row-to-post.json) |
+| AI: draft a post from a topic for review | [de](https://raw.githubusercontent.com/airbob2/n8n-nodes-social-poster/main/templates/de/ai-topic-to-draft-for-review.json) | [en](https://raw.githubusercontent.com/airbob2/n8n-nodes-social-poster/main/templates/en/ai-topic-to-draft-for-review.json) |
+| Schedule: recurring post by weekday | [de](https://raw.githubusercontent.com/airbob2/n8n-nodes-social-poster/main/templates/de/daily-recurring-post.json) | [en](https://raw.githubusercontent.com/airbob2/n8n-nodes-social-poster/main/templates/en/daily-recurring-post.json) |
+| Webhook: post from a shop or form request | [de](https://raw.githubusercontent.com/airbob2/n8n-nodes-social-poster/main/templates/de/webhook-form-to-post.json) | [en](https://raw.githubusercontent.com/airbob2/n8n-nodes-social-poster/main/templates/en/webhook-form-to-post.json) |
 
 ## Compatibility
 
