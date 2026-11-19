@@ -1,0 +1,21 @@
+{
+	"node": "n8n-nodes-social-poster.socialPoster",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": [
+		"Marketing & Content",
+		"Communication"
+	],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://github.com/airbob2/n8n-nodes-social-poster#credentials"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://github.com/airbob2/n8n-nodes-social-poster#readme"
+			}
+		]
+	}
+}

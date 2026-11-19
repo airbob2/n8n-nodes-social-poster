@@ -1,0 +1,58 @@
+{
+  "name": "n8n-nodes-social-poster",
+  "version": "0.1.0",
+  "description": "n8n community node for Social Poster: list accounts, create drafts and schedule social media posts with a team API key.",
+  "license": "MIT",
+  "homepage": "https://github.com/airbob2/n8n-nodes-social-poster",
+  "keywords": [
+    "n8n-community-node-package",
+    "social-poster",
+    "social media",
+    "scheduling"
+  ],
+  "author": {
+    "name": "Social Poster",
+    "email": "info@social-poster.io"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/airbob2/n8n-nodes-social-poster.git"
+  },
+  "scripts": {
+    "build": "n8n-node build",
+    "build:watch": "tsc --watch",
+    "dev": "n8n-node dev",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix",
+    "release": "n8n-node release",
+    "prepublishOnly": "n8n-node prerelease"
+  },
+  "files": [
+    "dist",
+    "!dist/tsconfig.tsbuildinfo",
+    "!dist/**/*.tsbuildinfo"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "strict": true,
+    "credentials": [
+      "dist/credentials/SocialPosterApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/SocialPoster/SocialPoster.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "*",
+    "eslint": "9.39.4",
+    "prettier": "3.8.3",
+    "release-it": "20.2.0",
+    "typescript": "5.9.3"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  },
+  "bugs": {
+    "url": "https://github.com/airbob2/n8n-nodes-social-poster/issues"
+  }
+}
