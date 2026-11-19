@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Templates: all five workflows now create only a draft by default. A `mode` field (German: `modus`) in the settings node plus an IF node switches to scheduling with **Post → Schedule Draft** (`minutesFromNow`, default 15). The Google Sheets template writes `draft`, `scheduled` or `error`; the webhook template only honours `"schedule": false` in scheduling mode. No node code changes.
+
 ## 0.1.2
 
 - Add ready-to-import n8n workflow templates in `templates/de` (German) and `templates/en` (English, for the n8n template gallery).
