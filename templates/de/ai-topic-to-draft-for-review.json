@@ -1,8 +1,8 @@
 {
-  "name": "KI: Aus einem Thema einen Social-Poster-Entwurf zur Freigabe anlegen",
+  "name": "KI: Aus einem Thema einen Social-Poster-Entwurf anlegen, optional vorgeplant",
   "nodes": [
     {
-      "id": "10f98fa2-7c2e-4211-a23e-bddfd06ccaa0",
+      "id": "0f569dd5-947e-517f-b176-d6806b2458b4",
       "name": "Übersicht",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -11,14 +11,14 @@
         -40
       ],
       "parameters": {
-        "content": "### So funktioniert's\nDieser Workflow hilft Dir, aus einem Thema einen fertigen Beitragstext zu schreiben und ihn in Social Poster als Entwurf zur Freigabe abzulegen. Über das Formular gibst Du das Thema und optionale Hinweise ein. Danach holt der Workflow den Marken- und Netzwerkkontext Deines Teams aus Social Poster und übergibt beides an OpenAI. Das Modell schreibt nur den Beitragstext, ohne ihn selbst zu veröffentlichen. Social Poster legt den Entwurf an und prüft ihn anschließend gegen die Regeln des gewählten Netzwerks. Du schaust Dir den Entwurf in Social Poster an und planst oder änderst ihn dort. Dieser Ablauf veröffentlicht nichts und bestätigt auch keinen Zeitplan.\n\n### Einrichtung\nInstalliere den Community-Node `n8n-nodes-social-poster` in selbst gehostetem n8n (nicht in n8n Cloud; noch nicht verifiziert), Paket `n8n-nodes-social-poster`, getestet mit Version 0.1.1: https://docs.n8n.io/integrations/community-nodes/installation/\nLege Anmeldedaten für „Social Poster API“ und OpenAI an. Den Social-Poster-Schlüssel findest Du unter Konto-Menü → KI-Zugriffe → API-Schlüssel für n8n. Basis-URL: `https://app.social-poster.io`.\nIm Node „Einstellungen“ trägst Du die Konto-Referenz ein (`acc_…`). Wähle beide Anmeldungen in den Nodes. Öffne das Formular über „Test workflow“, schicke ein Thema und prüfe den neuen Entwurf in Social Poster. Wenn der Text leer wirkt, schau in die Ausgabe des OpenAI-Nodes und passe den Ausdruck im Entwurf-Node an.\n\n### Anpassen\nDu kannst das Modell, die Sprache oder die Tonlage im OpenAI-Prompt ändern. Statt des Formulars kannst Du den Start auch durch einen Zeitplan oder ein Tabellenblatt ersetzen. Wenn die Prüfung des Entwurfs fehlschlägt, bleibt der Entwurf trotzdem in Social Poster; die Fehlermeldung zeigt, was das Netzwerk nicht akzeptiert.",
-        "height": 980,
+        "content": "### So funktioniert's\nÜber das Formular gibst Du ein Thema und optionale Hinweise ein. Der Workflow holt den Marken- und Netzwerkkontext Deines Teams aus Social Poster, und OpenAI schreibt daraus nur den Beitragstext. „Entwurf anlegen“ speichert ihn als KI-erzeugten Entwurf, „Entwurf prüfen“ prüft ihn gegen die Regeln des Netzwerks.\n\n### Entwurf oder vorgeplant\nStandard ist `modus` = `entwurf`: Es entsteht nur ein Entwurf, nichts wird geplant oder veröffentlicht. Den Link zur Ansicht findest Du in der Ausgabe von „Entwurf anlegen“ unter `draft.app_draft_url`. Für vorgeplante Beiträge setzt Du `modus` auf `planen`. Dann plant „Entwurf planen“ den Entwurf `minutesFromNow` Minuten später (mindestens 5) und bestätigt ihn. Braucht Dein Team eine Freigabe, wartet er unter „Wartet auf Dich“. Eine Sofort-Veröffentlichung gibt es nicht. Geplant wird nur ein Entwurf, den „Entwurf prüfen“ als gültig meldet.\n\n### Einrichtung\nInstalliere den Community-Node `n8n-nodes-social-poster` in selbst gehostetem n8n (nicht in n8n Cloud; der Node ist noch nicht verifiziert), getestet mit Version 0.1.1: Einstellungen → Community Nodes → Installieren. Anleitung: https://docs.n8n.io/integrations/community-nodes/installation/\nLege die Anmeldedaten „Social Poster API“ an. Den Schlüssel holst Du in Social Poster unter Konto-Menü → KI-Zugriffe → API-Schlüssel für n8n, die Basis-URL ist `https://app.social-poster.io` ohne `/mcp`.\nLege zusätzlich OpenAI-Anmeldedaten an. Trage in „Einstellungen“ die Konto-Referenz (`acc_…`) ein. Öffne das Formular über „Test workflow“ und schicke ein Thema.\n\n### Anpassen\nDu kannst Modell, Sprache oder Prompt im OpenAI-Node ändern oder statt des Formulars mit einem Zeitplan starten. KI-Texte können Fehler enthalten: Lies jeden Entwurf, bevor Du `planen` einstellst.",
+        "height": 820,
         "width": 660,
         "color": 1
       }
     },
     {
-      "id": "5eb0fd3f-b04f-4129-994d-dcc2ab2817cc",
+      "id": "28818abb-e5e9-5e15-856f-0f6a840fb1c0",
       "name": "Thema aufnehmen",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -27,41 +27,41 @@
         80
       ],
       "parameters": {
-        "content": "## Start über das Formular\nDu gibst das Thema und optionale Hinweise ein. In „Einstellungen“ steht die Konto-Referenz.",
-        "height": 240,
-        "width": 560,
+        "content": "## Start über das Formular\nThema und Hinweise kommen aus dem Formular. In „Einstellungen“ stehen Konto-Referenz, `modus` (Standard `entwurf`) und `minutesFromNow`.",
+        "height": 260,
+        "width": 520,
         "color": 7
       }
     },
     {
-      "id": "9207c521-fea5-43b6-94ba-c1769a8be9cb",
+      "id": "31f583e1-385d-57ac-afaa-b361fc62d174",
       "name": "Text mit KI schreiben",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1120,
+        1020,
         80
       ],
       "parameters": {
-        "content": "## Kontext und Entwurf\nZuerst kommt der Markenkontext aus Social Poster, dann schreibt OpenAI den Text dazu.",
-        "height": 240,
-        "width": 560,
+        "content": "## Kontext und Text\nZuerst kommt der Markenkontext aus Social Poster, dann schreibt OpenAI den Text.",
+        "height": 260,
+        "width": 520,
         "color": 7
       }
     },
     {
-      "id": "33460264-37bb-4a6a-ba8f-32d9b8cb37e0",
-      "name": "Als Entwurf ablegen",
+      "id": "94e67697-9581-5b2b-a2ca-082b243316ea",
+      "name": "Entwurf, optional planen",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1760,
+        1620,
         80
       ],
       "parameters": {
-        "content": "## Keine Veröffentlichung\nDer Workflow legt nur einen Entwurf an und prüft ihn. Planen und Freigabe machst Du in Social Poster.",
-        "height": 240,
-        "width": 560,
+        "content": "## Entwurf, optional planen\nDer Text wird als Entwurf gespeichert und geprüft. Nur bei `modus` = `planen` und gültigem Entwurf plant „Entwurf planen“ ihn.",
+        "height": 260,
+        "width": 1100,
         "color": 7
       }
     },
@@ -76,7 +76,7 @@
       ],
       "parameters": {
         "formTitle": "Beitrag aus einem Thema entwerfen",
-        "formDescription": "Schreibt mit KI einen Beitragstext und legt ihn in Social Poster als Entwurf zur Freigabe ab. Es wird nichts veröffentlicht.",
+        "formDescription": "Schreibt mit KI einen Beitragstext und legt ihn in Social Poster als Entwurf an.",
         "formFields": {
           "values": [
             {
@@ -94,7 +94,7 @@
         "options": {
           "respondWithOptions": {
             "values": {
-              "formSubmittedText": "Danke. Der Entwurf wird in Social Poster angelegt. Schau ihn Dir dort an, bevor Du ihn planst."
+              "formSubmittedText": "Danke. Der Entwurf wird in Social Poster angelegt."
             }
           }
         }
@@ -119,6 +119,18 @@
               "name": "accountRef",
               "type": "string",
               "value": "acc_DEINE_KONTO_REFERENZ"
+            },
+            {
+              "id": "c5178c27-dd13-5a94-8d53-95aea0d2be80",
+              "name": "modus",
+              "type": "string",
+              "value": "entwurf"
+            },
+            {
+              "id": "b1ccb207-230f-5879-bdcf-dbee98524577",
+              "name": "minutesFromNow",
+              "type": "number",
+              "value": 15
             },
             {
               "id": "6e8e024f-d97e-4425-a8c9-bf92b505fec4",
@@ -163,7 +175,7 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 1.8,
       "position": [
-        1400,
+        1360,
         400
       ],
       "parameters": {
@@ -195,7 +207,7 @@
       "type": "n8n-nodes-social-poster.socialPoster",
       "typeVersion": 1,
       "position": [
-        1720,
+        1680,
         400
       ],
       "parameters": {
@@ -221,14 +233,82 @@
       "type": "n8n-nodes-social-poster.socialPoster",
       "typeVersion": 1,
       "position": [
-        2000,
+        1960,
         400
       ],
       "parameters": {
         "resource": "draft",
         "operation": "validate",
         "workspace": "",
-        "draftRef": "={{ $json.draft.draft_ref }}"
+        "draftRef": "={{ $('Entwurf anlegen').item.json.draft.draft_ref }}"
+      },
+      "credentials": {
+        "socialPosterApi": {
+          "id": "YOUR_SOCIAL_POSTER_CREDENTIAL",
+          "name": "Social Poster API"
+        }
+      }
+    },
+    {
+      "id": "c30c061d-5202-596d-ba49-cb2024dace18",
+      "name": "Soll geplant werden?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2240,
+        400
+      ],
+      "parameters": {
+        "options": {},
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": false,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "722da6f1-f6df-5bfc-8db3-752bee5fed00",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ String($('Einstellungen').item.json.modus || \"\").trim().toLowerCase() }}",
+              "rightValue": "planen"
+            },
+            {
+              "id": "faf8fb43-8c3f-5b2c-ae4a-2a82ed5e5830",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.validation && $json.validation.ok === true }}",
+              "rightValue": ""
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "3a251b14-9f6c-5ac9-b110-fe6d4863abef",
+      "name": "Entwurf planen",
+      "type": "n8n-nodes-social-poster.socialPoster",
+      "typeVersion": 1,
+      "position": [
+        2520,
+        300
+      ],
+      "parameters": {
+        "resource": "post",
+        "operation": "scheduleDraft",
+        "workspace": "",
+        "draftRef": "={{ $('Entwurf anlegen').item.json.draft.draft_ref }}",
+        "scheduleMode": "minutes",
+        "minutesFromNow": "={{ $('Einstellungen').item.json.minutesFromNow }}",
+        "xContentReviewed": false
       },
       "credentials": {
         "socialPosterApi": {
@@ -293,6 +373,29 @@
             "index": 0
           }
         ]
+      ]
+    },
+    "Entwurf prüfen": {
+      "main": [
+        [
+          {
+            "node": "Soll geplant werden?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Soll geplant werden?": {
+      "main": [
+        [
+          {
+            "node": "Entwurf planen",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
       ]
     }
   },

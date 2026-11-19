@@ -1,8 +1,8 @@
 {
-  "name": "Webhook: Shop- oder Formularanfrage als Social-Poster-Beitrag anlegen",
+  "name": "Webhook: Shop- oder Formularanfrage als Social-Poster-Entwurf, optional vorgeplant",
   "nodes": [
     {
-      "id": "8c6bda7c-8d64-42ae-8969-8877f47a32c6",
+      "id": "2eb15126-31e7-57f5-960c-0d6e18d36181",
       "name": "Übersicht",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -11,14 +11,14 @@
         -60
       ],
       "parameters": {
-        "content": "### So funktioniert's\nDieser Workflow nimmt einen HTTP-POST von einem Shop, Formular oder einer anderen Anwendung entgegen und legt daraus einen Beitrag in Social Poster an. Zuerst prüft er, ob ein Text in `caption`, `text` oder `message` enthalten ist. Fehlt der Text, antwortet er mit dem Status 400 und erzeugt keinen Beitrag. Ist der Text da, übernimmt er Link, Titel und öffentlich erreichbare Medien-URLs aus der Anfrage. In „Einstellungen“ stehen Konto-Referenz und Vorlauf. Soll geplant werden (`schedule` wahr oder weggelassen), erstellt Social Poster den Entwurf, plant ihn mindestens fünf Minuten in die Zukunft und bestätigt die Veröffentlichung. Setzt Du `schedule` auf falsch, bleibt es beim Entwurf zur Freigabe. Die Antwort enthält die Entwurf-Nummer. Es wird nichts sofort veröffentlicht.\n\n### Einrichtung\nInstalliere den Community-Node `n8n-nodes-social-poster` in selbst gehostetem n8n (nicht in n8n Cloud; noch nicht verifiziert), Paket `n8n-nodes-social-poster`, getestet mit Version 0.1.1: https://docs.n8n.io/integrations/community-nodes/installation/\nLege die Anmeldedaten „Social Poster API“ an (Schlüssel unter Konto-Menü → KI-Zugriffe → API-Schlüssel für n8n, Basis-URL `https://app.social-poster.io`).\nTrage in „Einstellungen“ die Konto-Referenz (`acc_…`) und die Minuten ein (mindestens 5). Wähle die Anmeldung in beiden Social-Poster-Nodes. Speichere den Workflow, kopiere die Webhook-URL (Produktion, nicht Test) und sende ein JSON wie `{\"caption\":\"Testbeitrag\",\"link\":\"https://example.com\",\"schedule\":false}`. Prüfe den Entwurf in Social Poster, bevor Du echte Systeme anschließt. Wenn Dein n8n aus dem Internet erreichbar ist, schütze den Webhook zusätzlich, zum Beispiel mit Header-Auth im Webhook-Node. Lege den API-Schlüssel niemals in die Webhook-Anfrage.\n\n### Anpassen\nDu kannst die Feldnamen an Dein Formular anpassen oder immer nur Entwürfe anlegen. Für X (Twitter) bleibt „X Content Reviewed“ aus.",
-        "height": 1040,
+        "content": "### So funktioniert's\nDer Workflow nimmt einen HTTP-POST von einem Shop, Formular oder einer anderen Anwendung an. Fehlt ein Text in `caption`, `text` oder `message`, antwortet er mit Status 400. Sonst übernimmt er Link, Titel und öffentlich erreichbare Medien-URLs, speichert den Beitrag mit „Entwurf anlegen“ als Entwurf und antwortet mit der Entwurf-Nummer.\n\n### Entwurf oder vorgeplant\nStandard ist `modus` = `entwurf`: Es entsteht nur ein Entwurf, nichts wird geplant oder veröffentlicht. Den Link zur Ansicht findest Du in der Ausgabe von „Entwurf anlegen“ unter `draft.app_draft_url`. Für vorgeplante Beiträge setzt Du `modus` auf `planen`. Dann plant „Entwurf planen“ den Entwurf `minutesFromNow` Minuten später (mindestens 5) und bestätigt ihn. Braucht Dein Team eine Freigabe, wartet er unter „Wartet auf Dich“. Eine Sofort-Veröffentlichung gibt es nicht. Schickt die Anfrage `\"schedule\": false`, bleibt es auch dann beim Entwurf.\n\n### Einrichtung\nInstalliere den Community-Node `n8n-nodes-social-poster` in selbst gehostetem n8n (nicht in n8n Cloud; der Node ist noch nicht verifiziert), getestet mit Version 0.1.1: Einstellungen → Community Nodes → Installieren. Anleitung: https://docs.n8n.io/integrations/community-nodes/installation/\nLege die Anmeldedaten „Social Poster API“ an. Den Schlüssel holst Du in Social Poster unter Konto-Menü → KI-Zugriffe → API-Schlüssel für n8n, die Basis-URL ist `https://app.social-poster.io` ohne `/mcp`.\nTrage in „Einstellungen und Felder“ die Konto-Referenz (`acc_…`) ein. Speichere den Workflow, kopiere die Produktions-URL des Webhooks und sende `{\"caption\":\"Testbeitrag\"}`. Ist n8n aus dem Internet erreichbar, schütze den Webhook, zum Beispiel mit Header Auth. Lege den API-Schlüssel nie in die Anfrage.\n\n### Anpassen\nDu kannst die Feldnamen an Dein Formular anpassen.",
+        "height": 820,
         "width": 680,
         "color": 1
       }
     },
     {
-      "id": "93aec3be-30c8-410d-bfec-d4e61c454629",
+      "id": "bfa9a741-6911-5098-a8ed-e9480009740c",
       "name": "Anfrage annehmen",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -27,56 +27,56 @@
         60
       ],
       "parameters": {
-        "content": "## Webhook und Prüfung\nNur Anfragen mit einem Text laufen weiter. Ohne Text antwortet der Workflow mit Status 400.",
+        "content": "## Webhook und Prüfung\nNur Anfragen mit Text laufen weiter. Ohne Text antwortet der Workflow mit Status 400.",
         "height": 240,
-        "width": 560,
+        "width": 520,
         "color": 7
       }
     },
     {
-      "id": "032c0a12-cb23-4bdc-ac71-32f091691d4b",
+      "id": "3275f6b8-4e54-51f4-b098-16689285a508",
       "name": "Felder zuordnen",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1100,
+        1020,
         60
       ],
       "parameters": {
-        "content": "## Konto und Inhalt\nHier stehen Konto-Referenz und Vorlauf. Der Text kommt aus der Anfrage, nicht aus den Anmeldedaten.",
+        "content": "## Konto und Inhalt\nKonto-Referenz, `modus` (Standard `entwurf`) und `minutesFromNow` stehen hier. Der Text kommt aus der Anfrage.",
         "height": 240,
         "width": 480,
         "color": 7
       }
     },
     {
-      "id": "576da42f-e223-41bb-a61b-6d6c5dcc787a",
+      "id": "18d2594f-3332-57ce-8d41-77103c119d6a",
       "name": "Entwurf oder Plan",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1660,
+        1560,
         60
       ],
       "parameters": {
-        "content": "## Zwei Wege\n`schedule` wahr oder fehlend plant den Beitrag. `schedule` falsch legt nur einen Entwurf an. Beide Wege antworten mit der Entwurf-Nummer.",
+        "content": "## Entwurf, optional planen\nJede Anfrage wird ein Entwurf. Nur bei `modus` = `planen` und ohne `schedule` falsch plant „Entwurf planen“ ihn. Die Antwort enthält die Entwurf-Nummer.",
         "height": 240,
-        "width": 720,
+        "width": 820,
         "color": 7
       }
     },
     {
-      "id": "db62ba94-a747-4cf9-b67f-1d5585d89d5c",
+      "id": "f59f3b3c-a16c-54ff-ad73-c4e1df232f90",
       "name": "Webhook schützen",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         460,
-        780
+        800
       ],
       "parameters": {
         "content": "Wenn n8n aus dem Internet erreichbar ist, setze im Webhook eine Authentifizierung. Schicke niemals den Social-Poster-Schlüssel in der Anfrage mit.",
-        "height": 220,
+        "height": 150,
         "width": 560,
         "color": 3
       }
@@ -158,7 +158,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        1120,
+        1080,
         640
       ],
       "parameters": {
@@ -175,7 +175,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1120,
+        1080,
         320
       ],
       "parameters": {
@@ -187,6 +187,12 @@
               "name": "accountRef",
               "type": "string",
               "value": "acc_DEINE_KONTO_REFERENZ"
+            },
+            {
+              "id": "52f8f1c2-b552-5d42-957b-ac25bc55d6b5",
+              "name": "modus",
+              "type": "string",
+              "value": "entwurf"
             },
             {
               "id": "9816534a-13e2-4484-9e9f-e932abd4a41b",
@@ -220,7 +226,7 @@
             },
             {
               "id": "f04b28a6-44aa-4844-b1b9-5ad5b97ec770",
-              "name": "shouldSchedule",
+              "name": "requestAllowsSchedule",
               "type": "boolean",
               "value": "={{ ![\"false\", false, \"0\", 0].includes(($json.body && $json.body.schedule !== undefined) ? $json.body.schedule : ($json.schedule === undefined ? true : $json.schedule)) }}"
             }
@@ -229,78 +235,13 @@
       }
     },
     {
-      "id": "dd27c227-487d-4994-996a-cb8ab35d265f",
-      "name": "Soll geplant werden?",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
+      "id": "70c61338-eb8c-5bf1-b353-a39f13c50169",
+      "name": "Entwurf anlegen",
+      "type": "n8n-nodes-social-poster.socialPoster",
+      "typeVersion": 1,
       "position": [
-        1440,
+        1360,
         320
-      ],
-      "parameters": {
-        "options": {},
-        "conditions": {
-          "options": {
-            "version": 2,
-            "leftValue": "",
-            "caseSensitive": false,
-            "typeValidation": "loose"
-          },
-          "combinator": "and",
-          "conditions": [
-            {
-              "id": "18a5f933-e133-489e-ad31-0f61863d0b19",
-              "operator": {
-                "type": "boolean",
-                "operation": "true",
-                "singleValue": true
-              },
-              "leftValue": "={{ $json.shouldSchedule }}",
-              "rightValue": ""
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "5a759f1b-df45-4205-b3ef-42f7d09a4175",
-      "name": "Beitrag planen",
-      "type": "n8n-nodes-social-poster.socialPoster",
-      "typeVersion": 1,
-      "position": [
-        1760,
-        200
-      ],
-      "parameters": {
-        "resource": "post",
-        "operation": "createAndSchedule",
-        "workspace": "",
-        "account": "={{ $json.accountRef }}",
-        "caption": "={{ $json.caption }}",
-        "scheduleMode": "minutes",
-        "minutesFromNow": "={{ $json.minutesFromNow }}",
-        "xContentReviewed": false,
-        "additionalFields": {
-          "link": "={{ $json.link }}",
-          "mediaUrls": "={{ $json.mediaUrls }}",
-          "title": "={{ $json.title }}"
-        }
-      },
-      "credentials": {
-        "socialPosterApi": {
-          "id": "YOUR_SOCIAL_POSTER_CREDENTIAL",
-          "name": "Social Poster API"
-        }
-      }
-    },
-    {
-      "id": "420108f8-b697-4dcd-8c28-206e3c9d40fe",
-      "name": "Nur Entwurf anlegen",
-      "type": "n8n-nodes-social-poster.socialPoster",
-      "typeVersion": 1,
-      "position": [
-        1760,
-        480
       ],
       "parameters": {
         "resource": "draft",
@@ -322,17 +263,85 @@
       }
     },
     {
+      "id": "1d719a9c-3228-50a5-a1a5-672476373007",
+      "name": "Soll geplant werden?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1640,
+        320
+      ],
+      "parameters": {
+        "options": {},
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": false,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "e3d8abfa-9599-5a09-9d54-60d9bcf60f6e",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ String($('Einstellungen und Felder').item.json.modus || \"\").trim().toLowerCase() }}",
+              "rightValue": "planen"
+            },
+            {
+              "id": "9e49ca07-6c29-5411-ae77-5140eeebe070",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "leftValue": "={{ $('Einstellungen und Felder').item.json.requestAllowsSchedule }}",
+              "rightValue": ""
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "341b7c57-6a7f-5d93-87e9-5b48dcb8f2bc",
+      "name": "Entwurf planen",
+      "type": "n8n-nodes-social-poster.socialPoster",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        200
+      ],
+      "parameters": {
+        "resource": "post",
+        "operation": "scheduleDraft",
+        "workspace": "",
+        "draftRef": "={{ $('Entwurf anlegen').item.json.draft.draft_ref }}",
+        "scheduleMode": "minutes",
+        "minutesFromNow": "={{ $('Einstellungen und Felder').item.json.minutesFromNow }}",
+        "xContentReviewed": false
+      },
+      "credentials": {
+        "socialPosterApi": {
+          "id": "YOUR_SOCIAL_POSTER_CREDENTIAL",
+          "name": "Social Poster API"
+        }
+      }
+    },
+    {
       "id": "d6fc0c1d-60ae-4eb1-b86e-0d734f7ccb96",
       "name": "Erfolg beantworten",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        2080,
+        2200,
         320
       ],
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ { ok: true, draft_ref: $json.draft_ref || ($json.draft && $json.draft.draft_ref), status_class: $json.status_class || \"draft\", scheduled_at_utc: $json.scheduled_at_utc || null, approval_class: $json.approval_class || null } }}",
+        "responseBody": "={{ { ok: true, draft_ref: $('Entwurf anlegen').item.json.draft.draft_ref, status_class: $json.status_class || ($json.draft && $json.draft.status_class) || \"draft\", scheduled_at_utc: $json.scheduled_at_utc || null, approval_class: $json.approval_class || null } }}",
         "options": {
           "responseCode": 200
         }
@@ -374,6 +383,17 @@
       "main": [
         [
           {
+            "node": "Entwurf anlegen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entwurf anlegen": {
+      "main": [
+        [
+          {
             "node": "Soll geplant werden?",
             "type": "main",
             "index": 0
@@ -385,22 +405,11 @@
       "main": [
         [
           {
-            "node": "Beitrag planen",
+            "node": "Entwurf planen",
             "type": "main",
             "index": 0
           }
         ],
-        [
-          {
-            "node": "Nur Entwurf anlegen",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Beitrag planen": {
-      "main": [
         [
           {
             "node": "Erfolg beantworten",
@@ -410,7 +419,7 @@
         ]
       ]
     },
-    "Nur Entwurf anlegen": {
+    "Entwurf planen": {
       "main": [
         [
           {

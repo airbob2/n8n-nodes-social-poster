@@ -1,8 +1,8 @@
 {
-  "name": "Zeitplan: Wiederkehrenden Social-Poster-Beitrag nach Wochentag planen",
+  "name": "Zeitplan: Social-Poster-Beitrag nach Wochentag als Entwurf, optional vorgeplant",
   "nodes": [
     {
-      "id": "41bb358f-cc53-41f8-8ee2-8ee0853530f8",
+      "id": "fc272f28-e220-5d38-a6a2-1de7ce94b9ba",
       "name": "Übersicht",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -11,73 +11,73 @@
         -40
       ],
       "parameters": {
-        "content": "### So funktioniert's\nDieser Workflow hilft Dir, an festgelegten Wochentagen denselben oder einen vorbereiteten Beitrag in Social Poster zu planen. Jeden Tag zur eingestellten Uhrzeit (Zeitzone Europe/Berlin) startet der Zeitplan. Der nächste Schritt wählt den Text für den heutigen Wochentag aus den sieben Feldern in „Einstellungen“. Ist für diesen Tag kein Text hinterlegt, endet der Lauf ohne Beitrag. Sonst erstellt Social Poster einen Entwurf, plant ihn mindestens fünf Minuten in die Zukunft und bestätigt die Veröffentlichung. Es gibt keine Sofort-Veröffentlichung. Wenn Dein Team eine Freigabe verlangt, wartet der Beitrag unter „Wartet auf Dich“. Beachte: Ohne zusätzliche Prüfung kann an jedem hinterlegten Tag derselbe Text erneut geplant werden.\n\n### Einrichtung\nInstalliere den Community-Node `n8n-nodes-social-poster` in selbst gehostetem n8n (nicht in n8n Cloud; noch nicht verifiziert), Paket `n8n-nodes-social-poster`, getestet mit Version 0.1.1: https://docs.n8n.io/integrations/community-nodes/installation/\nLege die Anmeldedaten „Social Poster API“ an (Schlüssel unter Konto-Menü → KI-Zugriffe → API-Schlüssel für n8n, Basis-URL `https://app.social-poster.io`).\nIn „Einstellungen“ trägst Du die Konto-Referenz (`acc_…`), den Vorlauf in Minuten (mindestens 5), optional Link und Bild-URL sowie den Text für Montag bis Sonntag ein. Lass den Text eines Tages leer, wenn an diesem Tag nichts erscheinen soll. Die Uhrzeit stellst Du im Zeitplan-Node ein, Standard ist 9:00. Wähle die Anmeldung im Node „Beitrag planen“, teste einmal manuell und prüfe den Entwurf in Social Poster, bevor Du den Workflow aktivierst.\n\n### Anpassen\nDu kannst die Texte durch Zeilen in einer Tabelle ersetzen, wenn Du eine längere Rotation willst. Für X (Twitter) bleibt „X Content Reviewed“ aus, bis jemand den genauen Text geprüft hat.",
-        "height": 980,
+        "content": "### So funktioniert's\nJeden Tag zur eingestellten Uhrzeit (Europe/Berlin) startet der Zeitplan. „Text für heute wählen“ nimmt den Text des heutigen Wochentags aus den sieben Feldern in „Einstellungen“. Ist für den Tag kein Text hinterlegt, endet der Lauf ohne Beitrag. Sonst speichert „Entwurf anlegen“ den Beitrag als Entwurf in Social Poster.\n\n### Entwurf oder vorgeplant\nStandard ist `modus` = `entwurf`: Es entsteht nur ein Entwurf, nichts wird geplant oder veröffentlicht. Den Link zur Ansicht findest Du in der Ausgabe von „Entwurf anlegen“ unter `draft.app_draft_url`. Für vorgeplante Beiträge setzt Du `modus` auf `planen`. Dann plant „Entwurf planen“ den Entwurf `minutesFromNow` Minuten später (mindestens 5) und bestätigt ihn. Braucht Dein Team eine Freigabe, wartet er unter „Wartet auf Dich“. Eine Sofort-Veröffentlichung gibt es nicht.\n\n### Einrichtung\nInstalliere den Community-Node `n8n-nodes-social-poster` in selbst gehostetem n8n (nicht in n8n Cloud; der Node ist noch nicht verifiziert), getestet mit Version 0.1.1: Einstellungen → Community Nodes → Installieren. Anleitung: https://docs.n8n.io/integrations/community-nodes/installation/\nLege die Anmeldedaten „Social Poster API“ an. Den Schlüssel holst Du in Social Poster unter Konto-Menü → KI-Zugriffe → API-Schlüssel für n8n, die Basis-URL ist `https://app.social-poster.io` ohne `/mcp`.\nTrage in „Einstellungen“ die Konto-Referenz (`acc_…`), optional Link und Bild-URL sowie die Texte für Montag bis Sonntag ein. Die Uhrzeit stellst Du im Zeitplan ein, Standard ist 9:00. Wähle die Anmeldedaten in beiden Social-Poster-Nodes und teste einmal manuell.\n\n### Anpassen\nLass einen Tag leer, wenn dann nichts erscheinen soll. Für eine längere Rotation kannst Du die Texte aus einer Tabelle lesen.",
+        "height": 820,
         "width": 660,
         "color": 1
       }
     },
     {
-      "id": "2059f0c1-98f4-45f5-b6be-0c8157c9ae6e",
+      "id": "7afe0d0c-664c-5a48-8321-c3ec886f3e49",
       "name": "Zeitplan",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        460,
+        440,
         80
       ],
       "parameters": {
-        "content": "## Täglich zur Uhrzeit\nStandard ist 9:00 in der Zeitzone Europe/Berlin. Passe Stunde und Minute hier an.",
-        "height": 240,
-        "width": 360,
+        "content": "## Täglich zur Uhrzeit\nStandard ist 9:00 in der Zeitzone Europe/Berlin.",
+        "height": 260,
+        "width": 240,
         "color": 7
       }
     },
     {
-      "id": "225394a7-07a7-45e9-95e5-ac47a85bda7a",
+      "id": "9d498795-9482-52de-8c16-d6e3b2e256fa",
       "name": "Wochentagstexte",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        880,
+        720,
         80
       ],
       "parameters": {
-        "content": "## Texte je Tag\nHinterlege Konto, Vorlauf und die sieben Tages-Texte. Ein leerer Tag wird übersprungen.",
-        "height": 240,
-        "width": 480,
+        "content": "## Texte je Tag\nKonto-Referenz, `modus` (Standard `entwurf`), `minutesFromNow` und die sieben Tages-Texte. Ein leerer Tag wird übersprungen.",
+        "height": 260,
+        "width": 520,
         "color": 7
       }
     },
     {
-      "id": "26f188fe-41ea-44ae-b853-3fd7750c132b",
-      "name": "Planen",
+      "id": "06489838-f52c-5632-9dfa-927bd15da85d",
+      "name": "Entwurf oder vorgeplant",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1520,
+        1280,
         80
       ],
       "parameters": {
-        "content": "## Beitrag für heute\nNur wenn ein Text für den heutigen Tag da ist, wird geplant. Mindestvorlauf sind 5 Minuten.",
-        "height": 240,
-        "width": 420,
+        "content": "## Entwurf, optional planen\nNur wenn heute ein Text da ist, entsteht ein Entwurf. Bei `modus` = `planen` plant „Entwurf planen“ ihn und bestätigt die Veröffentlichung.",
+        "height": 260,
+        "width": 1100,
         "color": 7
       }
     },
     {
-      "id": "7e84095f-a041-4f5b-bb7a-8306a2c0afdd",
+      "id": "cd7d8604-7492-5a2c-bec3-18f7e5f0b507",
       "name": "Hinweis zu Wiederholungen",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1520,
-        700
+        1580,
+        620
       ],
       "parameters": {
-        "content": "Dieser Ablauf plant den hinterlegten Tages-Text bei jedem Lauf erneut. Ändere oder leere den Text, wenn er nicht wieder erscheinen soll.",
-        "height": 220,
-        "width": 420,
+        "content": "Jeder Lauf nimmt den hinterlegten Tages-Text erneut. Ändere oder leere den Text, wenn er nicht wiederkommen soll.",
+        "height": 150,
+        "width": 520,
         "color": 3
       }
     },
@@ -121,6 +121,12 @@
               "name": "accountRef",
               "type": "string",
               "value": "acc_DEINE_KONTO_REFERENZ"
+            },
+            {
+              "id": "51fbe2a8-12cb-5c89-82ac-881be1dbbfe0",
+              "name": "modus",
+              "type": "string",
+              "value": "entwurf"
             },
             {
               "id": "f988813f-51be-4dc5-8788-373db1d65950",
@@ -198,7 +204,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1120,
+        1080,
         400
       ],
       "parameters": {
@@ -210,6 +216,12 @@
               "name": "accountRef",
               "type": "string",
               "value": "={{ $json.accountRef }}"
+            },
+            {
+              "id": "275b5358-4a87-5544-bb01-3a53114c5764",
+              "name": "modus",
+              "type": "string",
+              "value": "={{ $json.modus }}"
             },
             {
               "id": "a2f608c6-d720-4c4f-a91f-f3d92b76bd07",
@@ -257,7 +269,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1400,
+        1360,
         400
       ],
       "parameters": {
@@ -286,28 +298,83 @@
       }
     },
     {
-      "id": "fd673db9-e06d-4805-9f53-29a69245e1fb",
-      "name": "Beitrag planen",
+      "id": "694060ea-000c-51cf-bdbe-e11538bc03b8",
+      "name": "Entwurf anlegen",
       "type": "n8n-nodes-social-poster.socialPoster",
       "typeVersion": 1,
       "position": [
-        1720,
-        280
+        1640,
+        300
       ],
       "parameters": {
-        "resource": "post",
-        "operation": "createAndSchedule",
+        "resource": "draft",
+        "operation": "create",
         "workspace": "",
         "account": "={{ $json.accountRef }}",
         "caption": "={{ $json.caption }}",
-        "scheduleMode": "minutes",
-        "minutesFromNow": "={{ $json.minutesFromNow }}",
-        "xContentReviewed": false,
         "additionalFields": {
           "link": "={{ $json.link }}",
           "mediaUrls": "={{ $json.mediaUrls }}",
           "title": "={{ $json.title }}"
         }
+      },
+      "credentials": {
+        "socialPosterApi": {
+          "id": "YOUR_SOCIAL_POSTER_CREDENTIAL",
+          "name": "Social Poster API"
+        }
+      }
+    },
+    {
+      "id": "5c9f9534-de63-5b6d-b58b-1b53d29e068a",
+      "name": "Soll geplant werden?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        300
+      ],
+      "parameters": {
+        "options": {},
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": false,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "cf850e51-6278-5e42-8350-77e2b3d87b32",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ String($('Text für heute wählen').item.json.modus || \"\").trim().toLowerCase() }}",
+              "rightValue": "planen"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "db3d3b07-c52a-53da-989f-0f75ed8025d1",
+      "name": "Entwurf planen",
+      "type": "n8n-nodes-social-poster.socialPoster",
+      "typeVersion": 1,
+      "position": [
+        2200,
+        200
+      ],
+      "parameters": {
+        "resource": "post",
+        "operation": "scheduleDraft",
+        "workspace": "",
+        "draftRef": "={{ $('Entwurf anlegen').item.json.draft.draft_ref }}",
+        "scheduleMode": "minutes",
+        "minutesFromNow": "={{ $('Text für heute wählen').item.json.minutesFromNow }}",
+        "xContentReviewed": false
       },
       "credentials": {
         "socialPosterApi": {
@@ -356,11 +423,34 @@
       "main": [
         [
           {
-            "node": "Beitrag planen",
+            "node": "Entwurf anlegen",
             "type": "main",
             "index": 0
           }
         ]
+      ]
+    },
+    "Entwurf anlegen": {
+      "main": [
+        [
+          {
+            "node": "Soll geplant werden?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Soll geplant werden?": {
+      "main": [
+        [
+          {
+            "node": "Entwurf planen",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
       ]
     }
   },

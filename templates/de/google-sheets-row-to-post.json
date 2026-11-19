@@ -1,8 +1,8 @@
 {
-  "name": "Google Tabelle: Bereite Zeile als Social-Poster-Beitrag planen",
+  "name": "Google Tabelle: Bereite Zeilen als Social-Poster-Entwurf, optional vorgeplant",
   "nodes": [
     {
-      "id": "ed5b6a04-b0e5-4213-a778-cfb067ae361c",
+      "id": "66b70410-3aab-50c7-bc36-d6aa1702715b",
       "name": "Übersicht",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -11,14 +11,14 @@
         -60
       ],
       "parameters": {
-        "content": "### So funktioniert's\nDieser Workflow hilft Dir, geplante Social-Media-Beiträge aus einer Google-Tabelle abzuarbeiten. Ein Zeitplan prüft die Tabelle regelmäßig, liest die Zeilen und übernimmt nur Einträge mit dem Status `ready` und einem ausgefüllten Text. Für jede dieser Zeilen erstellt Social Poster einen Entwurf, plant ihn mindestens fünf Minuten in die Zukunft und bestätigt die Veröffentlichung. Danach schreibt der Workflow die Entwurf-Nummer und den Status `scheduled` zurück in die Tabelle. Schlägt das Planen fehl, bleibt die Zeile nicht einfach stehen: Der Status wird auf `error` gesetzt, damit Du die Zeile prüfen und erneut auf `ready` stellen kannst. Es gibt keine Sofort-Veröffentlichung. Wenn Dein Team eine Freigabe braucht, wartet der Beitrag in Social Poster unter „Wartet auf Dich“.\n\n### Einrichtung\nInstalliere den Community-Node `n8n-nodes-social-poster` in selbst gehostetem n8n (nicht in n8n Cloud; Node noch nicht verifiziert), Paket `n8n-nodes-social-poster`, getestet mit Version 0.1.1: https://docs.n8n.io/integrations/community-nodes/installation/\nLege Anmeldedaten für „Social Poster API“ und Google Sheets (OAuth2) an. Den Social-Poster-Schlüssel findest Du unter Konto-Menü → KI-Zugriffe → API-Schlüssel für n8n. Basis-URL: `https://app.social-poster.io`.\nLege eine Tabelle mit diesen Spaltenköpfen in Zeile 1 an: `Caption`, `Link`, `MediaURLs`, `Title`, `Status`, `DraftRef`, `ScheduledAt`. Trage in „Einstellungen“ die Tabellen-ID, den Blattnamen, Deine Konto-Referenz (`acc_…`) und die Minuten bis zur Veröffentlichung ein (mindestens 5). Wähle beide Anmeldungen in den entsprechenden Nodes. Setze eine Testzeile auf Status `ready`, führe den Workflow einmal aus und prüfe Social Poster sowie die zurückgeschriebenen Spalten, bevor Du den Zeitplan aktivierst.\n\n### Anpassen\nDu kannst den Zeitplan ändern oder statt automatischem Planen nur einen Entwurf erzeugen. Lege nicht zu viele Zeilen gleichzeitig auf `ready`, weil der API-Schlüssel Veröffentlichungen begrenzt (3 pro Minute). Für X (Twitter) bleibt „X Content Reviewed“ aus, bis jemand den genauen Text geprüft hat.",
-        "height": 1040,
+        "content": "### So funktioniert's\nEin Zeitplan liest regelmäßig Deine Google-Tabelle und übernimmt nur Zeilen mit Status `ready` und ausgefülltem Text. Für jede Zeile speichert „Entwurf anlegen“ einen Entwurf in Social Poster. „Status schreiben“ trägt danach `draft`, `scheduled` oder `error` und die Entwurf-Nummer in die Zeile ein. Ein Fehler bei einer Zeile hält die anderen nicht auf.\n\n### Entwurf oder vorgeplant\nStandard ist `modus` = `entwurf`: Es entsteht nur ein Entwurf, nichts wird geplant oder veröffentlicht. Den Link zur Ansicht findest Du in der Ausgabe von „Entwurf anlegen“ unter `draft.app_draft_url`. Für vorgeplante Beiträge setzt Du `modus` auf `planen`. Dann plant „Entwurf planen“ den Entwurf `minutesFromNow` Minuten später (mindestens 5) und bestätigt ihn. Braucht Dein Team eine Freigabe, wartet er unter „Wartet auf Dich“. Eine Sofort-Veröffentlichung gibt es nicht.\n\n### Einrichtung\nInstalliere den Community-Node `n8n-nodes-social-poster` in selbst gehostetem n8n (nicht in n8n Cloud; der Node ist noch nicht verifiziert), getestet mit Version 0.1.1: Einstellungen → Community Nodes → Installieren. Anleitung: https://docs.n8n.io/integrations/community-nodes/installation/\nLege die Anmeldedaten „Social Poster API“ an. Den Schlüssel holst Du in Social Poster unter Konto-Menü → KI-Zugriffe → API-Schlüssel für n8n, die Basis-URL ist `https://app.social-poster.io` ohne `/mcp`.\nLege Google-Sheets-Anmeldedaten an und eine Tabelle mit diesen Spaltenköpfen in Zeile 1: `Caption`, `Link`, `MediaURLs`, `Title`, `Status`, `DraftRef`, `ScheduledAt`. Trage in „Einstellungen“ Tabellen-ID, Blattname und Konto-Referenz (`acc_…`) ein. Setze eine Testzeile auf `ready` und führe den Workflow einmal aus.\n\n### Anpassen\nStelle nicht zu viele Zeilen gleichzeitig auf `ready`: Der Schlüssel erlaubt 10 Entwurfs-Änderungen und 3 Veröffentlichungsschritte pro Minute.",
+        "height": 820,
         "width": 680,
         "color": 1
       }
     },
     {
-      "id": "dcda949e-ff7a-4704-bb7b-cf4b82e07db7",
+      "id": "a5af86da-5f8b-52a8-ab6a-91893f48e871",
       "name": "Zeitplan und Einstellungen",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -27,57 +27,57 @@
         60
       ],
       "parameters": {
-        "content": "## Was Du anpassen musst\nHier stellst Du Intervall, Tabellen-ID, Blattname, Konto-Referenz und Vorlauf in Minuten ein.",
-        "height": 240,
+        "content": "## Was Du anpassen musst\nIntervall, Tabellen-ID, Blattname, Konto-Referenz, `modus` (Standard `entwurf`) und `minutesFromNow`.",
+        "height": 260,
         "width": 520,
         "color": 7
       }
     },
     {
-      "id": "28e236b3-a04f-457a-a0e0-41b15f35acec",
+      "id": "b19580d4-789a-5f6d-8204-7612891a5d5b",
       "name": "Bereite Zeilen finden",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1060,
+        1040,
         60
       ],
       "parameters": {
         "content": "## Nur Status ready\nEs werden nur Zeilen mit Status `ready` und ausgefülltem Text übernommen.",
-        "height": 240,
-        "width": 400,
+        "height": 260,
+        "width": 520,
         "color": 7
       }
     },
     {
-      "id": "9f030807-9d8d-41ad-8698-91b348e5bd16",
-      "name": "Planen und zurückschreiben",
+      "id": "aa328ae8-1a09-5af8-8740-79e0c0521a5d",
+      "name": "Entwurf, planen, zurückschreiben",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1540,
+        1600,
         60
       ],
       "parameters": {
-        "content": "## Ergebnis in die Tabelle\nBei Erfolg setzt der Workflow Status `scheduled` und die Entwurf-Nummer. Bei einem Fehler steht `error` in der Zeile.",
-        "height": 240,
-        "width": 720,
+        "content": "## Entwurf, optional planen\nJede Zeile wird ein Entwurf. Bei `modus` = `planen` plant „Entwurf planen“ ihn. „Status schreiben“ setzt `draft`, `scheduled` oder `error`.",
+        "height": 260,
+        "width": 1060,
         "color": 7
       }
     },
     {
-      "id": "3feb2695-8eb7-4657-b24d-b53857a2f63c",
+      "id": "56b74e97-35af-5c18-bb71-da71c3058541",
       "name": "Hinweis zu X",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1540,
-        760
+        1880,
+        640
       ],
       "parameters": {
-        "content": "Lass „X Content Reviewed“ aus, bis jemand den genauen Text und die Medien geprüft hat. Für X ist das Pflicht.",
-        "height": 200,
-        "width": 400,
+        "content": "Prüfe Beiträge für X (Twitter) selbst. Lass in „Entwurf planen“ „X Content Reviewed“ aus, solange niemand den genauen Text und die Medien geprüft hat.",
+        "height": 150,
+        "width": 520,
         "color": 3
       }
     },
@@ -131,6 +131,12 @@
               "name": "accountRef",
               "type": "string",
               "value": "acc_DEINE_KONTO_REFERENZ"
+            },
+            {
+              "id": "e1301ad4-ece0-5a6a-8e2b-bc3d8b8aab09",
+              "name": "modus",
+              "type": "string",
+              "value": "entwurf"
             },
             {
               "id": "f245d5d3-e407-4ded-97c6-73d6c51b38a4",
@@ -216,8 +222,8 @@
       }
     },
     {
-      "id": "20e0d397-525b-4e6d-8e81-e49b8e60d983",
-      "name": "Beitrag planen",
+      "id": "1876460c-2c27-5d4c-8d78-3eb081aa9b71",
+      "name": "Entwurf anlegen",
       "type": "n8n-nodes-social-poster.socialPoster",
       "typeVersion": 1,
       "position": [
@@ -225,14 +231,11 @@
         400
       ],
       "parameters": {
-        "resource": "post",
-        "operation": "createAndSchedule",
+        "resource": "draft",
+        "operation": "create",
         "workspace": "",
         "account": "={{ $('Einstellungen').item.json.accountRef }}",
         "caption": "={{ $json.Caption }}",
-        "scheduleMode": "minutes",
-        "minutesFromNow": "={{ $('Einstellungen').item.json.minutesFromNow }}",
-        "xContentReviewed": false,
         "additionalFields": {
           "link": "={{ $json.Link }}",
           "mediaUrls": "={{ $json.MediaURLs }}",
@@ -248,8 +251,8 @@
       "onError": "continueRegularOutput"
     },
     {
-      "id": "6160eb1f-2dc7-4ffa-ac00-32f0aa222833",
-      "name": "Planen erfolgreich?",
+      "id": "6e21ba2d-98c9-51e8-ae54-d709e2a4b47a",
+      "name": "Soll geplant werden?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
@@ -268,23 +271,22 @@
           "combinator": "and",
           "conditions": [
             {
-              "id": "2b0cab66-a079-49cc-a06e-521d8cff3313",
+              "id": "1904a6cd-97aa-5da6-b1cb-daad36626803",
               "operator": {
                 "type": "string",
-                "operation": "notExists",
-                "singleValue": true
+                "operation": "equals"
               },
-              "leftValue": "={{ $json.error }}",
-              "rightValue": ""
+              "leftValue": "={{ String($('Einstellungen').item.json.modus || \"\").trim().toLowerCase() }}",
+              "rightValue": "planen"
             },
             {
-              "id": "12d6a37e-4aeb-4b0a-8c60-d491d4cd6acd",
+              "id": "830e3798-fd02-5153-825f-c7683c2dc1f0",
               "operator": {
                 "type": "string",
                 "operation": "notEmpty",
                 "singleValue": true
               },
-              "leftValue": "={{ $json.draft_ref || ($json.draft && $json.draft.draft_ref) }}",
+              "leftValue": "={{ $json.draft && $json.draft.draft_ref ? $json.draft.draft_ref : \"\" }}",
               "rightValue": ""
             }
           ]
@@ -292,13 +294,39 @@
       }
     },
     {
-      "id": "e75f3621-c563-4595-ba84-2ac4edacf627",
-      "name": "Status scheduled schreiben",
+      "id": "e954eb6c-5d2c-5ecf-b656-f293c261993f",
+      "name": "Entwurf planen",
+      "type": "n8n-nodes-social-poster.socialPoster",
+      "typeVersion": 1,
+      "position": [
+        2200,
+        280
+      ],
+      "parameters": {
+        "resource": "post",
+        "operation": "scheduleDraft",
+        "workspace": "",
+        "draftRef": "={{ $('Entwurf anlegen').item.json.draft.draft_ref }}",
+        "scheduleMode": "minutes",
+        "minutesFromNow": "={{ $('Einstellungen').item.json.minutesFromNow }}",
+        "xContentReviewed": false
+      },
+      "credentials": {
+        "socialPosterApi": {
+          "id": "YOUR_SOCIAL_POSTER_CREDENTIAL",
+          "name": "Social Poster API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "c82b0a53-b0d3-5a80-93bd-f895a4f77222",
+      "name": "Status schreiben",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
       "position": [
-        2240,
-        280
+        2480,
+        400
       ],
       "parameters": {
         "operation": "update",
@@ -319,9 +347,9 @@
           ],
           "value": {
             "row_number": "={{ $('Nur Status ready').item.json.row_number }}",
-            "Status": "scheduled",
-            "DraftRef": "={{ $json.draft_ref || $json.draft.draft_ref }}",
-            "ScheduledAt": "={{ $json.scheduled_at_utc }}"
+            "Status": "={{ $json.error ? \"error\" : ($json.scheduled_at_utc ? \"scheduled\" : \"draft\") }}",
+            "DraftRef": "={{ $('Entwurf anlegen').item.json.draft && $('Entwurf anlegen').item.json.draft.draft_ref ? $('Entwurf anlegen').item.json.draft.draft_ref + ($json.error ? \" – \" + $json.error : \"\") : ($json.error || \"error\") }}",
+            "ScheduledAt": "={{ $json.scheduled_at_utc || \"\" }}"
           },
           "schema": [
             {
@@ -417,82 +445,6 @@
           "name": "Google Sheets account"
         }
       }
-    },
-    {
-      "id": "4164bcb2-2456-4eeb-b0d2-dc122650a422",
-      "name": "Status error schreiben",
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.5,
-      "position": [
-        2240,
-        560
-      ],
-      "parameters": {
-        "operation": "update",
-        "documentId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "={{ $('Einstellungen').item.json.sheetId }}"
-        },
-        "sheetName": {
-          "__rl": true,
-          "mode": "name",
-          "value": "={{ $('Einstellungen').item.json.sheetName }}"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "matchingColumns": [
-            "row_number"
-          ],
-          "value": {
-            "row_number": "={{ $('Nur Status ready').item.json.row_number }}",
-            "Status": "error",
-            "DraftRef": "={{ $json.error || \"scheduling_failed\" }}"
-          },
-          "schema": [
-            {
-              "id": "Status",
-              "displayName": "Status",
-              "type": "string",
-              "display": true,
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "DraftRef",
-              "displayName": "DraftRef",
-              "type": "string",
-              "display": true,
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "row_number",
-              "displayName": "row_number",
-              "type": "string",
-              "display": true,
-              "required": false,
-              "readOnly": true,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true,
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {}
-      },
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "YOUR_GOOGLE_SHEETS_CREDENTIAL",
-          "name": "Google Sheets account"
-        }
-      }
     }
   ],
   "pinData": {},
@@ -534,36 +486,47 @@
       "main": [
         [
           {
-            "node": "Beitrag planen",
+            "node": "Entwurf anlegen",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Beitrag planen": {
+    "Entwurf anlegen": {
       "main": [
         [
           {
-            "node": "Planen erfolgreich?",
+            "node": "Soll geplant werden?",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Planen erfolgreich?": {
+    "Soll geplant werden?": {
       "main": [
         [
           {
-            "node": "Status scheduled schreiben",
+            "node": "Entwurf planen",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Status error schreiben",
+            "node": "Status schreiben",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entwurf planen": {
+      "main": [
+        [
+          {
+            "node": "Status schreiben",
             "type": "main",
             "index": 0
           }
